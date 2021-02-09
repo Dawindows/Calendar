@@ -1,4 +1,5 @@
 const path = require("path");
+const miniCss = require('mini-css-extract-plugin');
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
@@ -7,8 +8,7 @@ module.exports = {
   context: path.resolve(__dirname, "src"),
   mode: "development",
   entry: {
-    main: "./js/script.js",
-    calendar: "./js/calendar.js",
+    main: "./js/script.js"
   },
   output: {
     filename: "[name].[contenthash].js",
@@ -23,11 +23,10 @@ module.exports = {
       filename: 'index.html',
       template: "index.html",
     }),
-    new HTMLWebpackPlugin({
-      filename: 'event.html',
-      template: "event.html",
-    }),
     new CleanWebpackPlugin(),
+    new miniCss({
+         filename: 'style.css',
+      }),
   ],
   module: {
     rules: [
@@ -36,9 +35,9 @@ module.exports = {
         use: ["style-loader", "css-loader"],
       },
       {
-        test: /\.s[ac]ss$/,
-        use: ['css-loader','sass-loader']
-      }
-    ],
+        test:/\.(s*)css$/,
+        use: [miniCss.loader,'css-loader','sass-loader']
+      }   
+    ]
   },
 };

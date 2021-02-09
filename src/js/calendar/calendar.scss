@@ -1,0 +1,36 @@
+.calendar {
+	width: 920px;
+	margin: 62px auto;
+}
+.table {
+	td {
+		width: 146px;
+		height: 40px;
+		vertical-align: middle;
+	}
+}
+#calendar-header {
+	.card-header-title {
+		padding: 0 0 8px 0;
+		span {
+			font-size: 24px;
+		}
+	}
+}
+.show {
+	display: block;
+}
+.hide{
+	display: none;
+}
+.message-header {
+	height: 32px;
+	padding: 4px;
+	word-break: break-all;
+	font-weight: 500;
+	font-size: 14px;
+	border-radius: 0;
+}
+.selected {
+	opacity: 0.6;
+  }
