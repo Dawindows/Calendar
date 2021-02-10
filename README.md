@@ -26,4 +26,4 @@
 ### Contact information for programmer
 
 * Full Name: David Sokur;
-* Email: davidsokur02@gmial.com;
+* Email: davidsokur02@gmail.com;
