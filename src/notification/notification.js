@@ -12,7 +12,7 @@ export class Notification {
     return `    
         <div class="notification">
             <button id="delete-notification" class="delete is-medium"></button>
-            ${this.text}
+            <div>${this.text}<div>
         </div>      
       `;
   }

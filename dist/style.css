@@ -39,7 +39,9 @@ body {
 .selected {
   opacity: 0.6; }
 
-
 .modal-card {
   width: 404px; }
+
+.notification {
+  border-radius: 0; }
 

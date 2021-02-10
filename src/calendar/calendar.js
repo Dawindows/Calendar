@@ -193,9 +193,7 @@ export class Calendar {
   }
 
   deleteCallback(event) {
-    const index = this.calendarEvents.findIndex(
-      (item) => event.id === item.id.toString()
-    );
+    const index = this.calendarEvents.findIndex((item) => event.id === item.id.toString());
     this.calendarEvents.splice(index, 1);
     localStorage.setItem("events", JSON.stringify(this.calendarEvents));
     this.render();

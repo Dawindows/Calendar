@@ -1,5 +1,5 @@
 import { Calendar } from "../calendar/calendar.js";
-import { Notification } from "./../notification/notification.js";
+import { Notification } from "../notification/notification.js";
 
 export class AddEvent {
   constructor(parent) {
@@ -23,29 +23,23 @@ export class AddEvent {
   }
 
   get template() {
-    const memersElements = this.members
-      .map((member) => {
-        return `
-          <option>${member}</option>
-        `;
-      })
-      .join("");
+    const memersElements = this.members.map((member) => {
+      return `
+        <option>${member}</option>
+      `;
+      }).join("");
 
-    const daysElements = this.days
-      .map((day) => {
-        return `
-        <option>${day}</option>
-        `;
-      })
-      .join("");
+    const daysElements = this.days.map((day) => {
+      return `
+      <option>${day}</option>
+      `;
+      }).join("");
 
-    const timeElements = this.times
-      .map((time) => {
-        return `
-        <option>${time}</option>
-        `;
-      })
-      .join("");
+    const timeElements = this.times.map((time) => {
+      return `
+      <option>${time}</option>
+      `;
+      }).join("");
 
     return `
       <div class="card-header">
@@ -107,6 +101,63 @@ export class AddEvent {
     this.el.classList.add("add-event");
   }
 
+  afterInit() {
+    this.cancel = this.el.querySelector("#cancel");
+    this.createEvent = this.el.querySelector("#create-event");
+    this.eventName = document.querySelector("#event-name");
+    this.members = document.querySelector("#members");
+    this.weekdays = document.querySelector("#weekdays");
+    this.time = document.querySelector("#time");
+
+    const listnerCancee = this.cancel.addEventListener("click", () => {
+      this.destroy();
+      const caledar = new Calendar(document.body);
+      caledar.render();
+    });
+
+    const listenerCreateEvent = this.createEvent.addEventListener("click", () => {
+        this.checkDate();
+    });
+
+    this.eventListeners.push(["click", listenerCreateEvent, this.createEvent]);
+    this.eventListeners.push(["click", listnerCancee, this.cancel]);
+  }
+
+  checkDate() {
+    const dateInfo = this.calendarEvents.find((item, key) => {
+      return item.weekdays === weekdays.value && item.time === time.value;
+    });
+
+    if (this.eventName.value.length <= 3) {
+      this.renderNotification(
+        "Filed to create an event. Event name is too short",
+        false
+      );
+    } else if (dateInfo) {
+      this.renderNotification(
+        "Filed to create an event. Time slot is already booked",
+        false
+      );
+    } else {
+      this.addEvent();
+      this.destroy();
+      const caledar = new Calendar(document.body);
+      caledar.render();
+      this.renderNotification("Event created", true);
+    }
+  }
+
+  renderNotification(textValue, booleanValue) {
+    const notification = new Notification(
+      document.querySelector("#header"),
+      textValue,
+      booleanValue,
+      5000
+    );
+
+    notification.render();
+  }
+
   addEvent() {
     const event = {
       eventName: this.eventName.value,
@@ -121,55 +172,6 @@ export class AddEvent {
 
     this.calendarEvents.push(event);
     localStorage.setItem("events", JSON.stringify(this.calendarEvents));
-  }
-
-  timeCheck() {
-    const dateInfo = this.calendarEvents.find((item, key) => {
-      return item.weekdays === weekdays.value && item.time === time.value;
-    });
-
-    if (!dateInfo) {
-      this.addEvent()
-      this.destroy();
-      const caledar = new Calendar(document.body);
-      caledar.render();
-    }
-
-    const notification = new Notification(
-      document.querySelector("#header"),
-      dateInfo ? "Filed to create an event. Time slot is already bookedt": "Create an event",
-      dateInfo ? false : true,
-      5000
-    );
-    
-    notification.render();
-    console.log("object");
-  }
-
-  afterInit() {
-    this.cancel = this.el.querySelector("#cancel");
-    this.createEvent = this.el.querySelector("#create-event");
-
-    this.eventName = document.querySelector("#event-name");
-    this.members = document.querySelector("#members");
-    this.weekdays = document.querySelector("#weekdays");
-    this.time = document.querySelector("#time");
-
-    const listnerCancee = this.cancel.addEventListener("click", () => {
-      this.destroy();
-      const caledar = new Calendar(document.body);
-      caledar.render();
-    });
-
-    const listenerCreateEvent = this.createEvent.addEventListener(
-      "click",
-      () => {
-        this.timeCheck();
-      }
-    );
-
-    this.eventListeners.push(["click", listenerCreateEvent, this.createEvent]);
-    this.eventListeners.push(["click", listnerCancee, this.cancel]);
   }
 
   render() {

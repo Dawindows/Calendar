@@ -8,14 +8,14 @@ module.exports = {
   context: path.resolve(__dirname, "src"),
   mode: "development",
   entry: {
-    main: "./js/script.js"
+    main: "./script.js"
   },
   output: {
     filename: "[name].[contenthash].js",
     path: path.resolve(__dirname, "dist"),
   },
   devServer: {
-    port: 777,
+    port: 4200,
     open: true,
   },
   plugins: [
