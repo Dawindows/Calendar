@@ -21,17 +21,19 @@ export class Notification {
     const elNotification = document.querySelector(".notification");
     this.success ? elNotification.classList.add("is-primary") : elNotification.classList.add("is-danger");
       
-    setTimeout(() => {this.destroy()}, this.duration);
+    this.timer = setTimeout(() => {this.destroy()}, this.duration);
   }
 
   init() {
     this.el = document.createElement("div");
+    this.el.classList.add("content-notification")
   }
 
   afterInit() {
     this.deleteNotification = document.querySelector("#delete-notification");
 
     const listenerDeleteNotification = this.deleteNotification.addEventListener("click", () => { 
+        clearTimeout(this.timer);
         this.destroy(); 
     });
 
