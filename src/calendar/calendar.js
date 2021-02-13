@@ -157,7 +157,7 @@ export class Calendar {
   renderEvents() {
     this.calendarEvents.forEach((item, key) => {
       let str = "";
-      str = item.weekdays + "-" + item.time.replace(/(:00)/, "");
+      str = item.weekday + "-" + item.time;
       this.container = document.querySelector("#" + str.toLowerCase());
       const allCalendarEvents = new Event(this.container,  item.members, item.id, item.eventName)
       allCalendarEvents.render()

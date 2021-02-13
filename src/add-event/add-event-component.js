@@ -64,7 +64,7 @@ export class AddEvent {
           <div class="field">
               <div class="control is-expanded">
                   <div class="select is-fullwidth">
-                      <select id="weekdays">
+                      <select id="weekday">
                           ${daysElements}
                       </select>
                   </div>
@@ -106,7 +106,7 @@ export class AddEvent {
     this.createEvent = this.el.querySelector("#create-event");
     this.eventName = document.querySelector("#event-name");
     this.members = document.querySelector("#members");
-    this.weekdays = document.querySelector("#weekdays");
+    this.weekday = document.querySelector("#weekday");
     this.time = document.querySelector("#time");
 
     const listenerCancel = this.cancel.addEventListener("click", () => {
@@ -125,7 +125,7 @@ export class AddEvent {
 
   checkDate() {
     const dateInfo = this.calendarEvents.find((item, key) => {
-      return item.weekdays === weekdays.value && item.time === time.value;
+      return item.weekday === weekday.value && item.time === time.value;
     });
 
     if (this.eventName.value.length <= 3) {
@@ -148,7 +148,6 @@ export class AddEvent {
   }
 
   renderNotification(textValue, booleanValue) {
-    // this.elNotification = document.querySelector(".content-notification");
     if (this.notification) {
       this.notification.destroy();
     }
@@ -170,9 +169,9 @@ export class AddEvent {
         this.members.value === "All members"
           ? ["Maria", "Bob", "Alex"]
           : [this.members.value],
-      weekdays: this.weekdays.value,
-      time: this.time.value,
-      id: this.weekdays.value + this.time.value,
+      weekday: this.weekday.value.toLowerCase(),
+      time: this.time.value.replace(/(:00)/, ""),
+      id: this.weekday.value.toLowerCase() + "-" + this.time.value.replace(/(:00)/, ""),
     };
 
     this.calendarEvents.push(event);
