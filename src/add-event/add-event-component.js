@@ -148,18 +148,19 @@ export class AddEvent {
   }
 
   renderNotification(textValue, booleanValue) {
-    this.elNotification = document.querySelector(".content-notification");
-    if(this.elNotification) {
-      this.elNotification.remove()
+    // this.elNotification = document.querySelector(".content-notification");
+    if (this.notification) {
+      this.notification.destroy();
     }
     
-    const notification = new Notification(
+    this.notification = new Notification(
       document.querySelector("#header"),
       textValue,
       booleanValue,
       5000
     );
-    notification.render();
+    
+    this.notification.render();
   }
 
   addEvent() {

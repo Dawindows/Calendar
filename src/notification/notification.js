@@ -53,6 +53,10 @@ export class Notification {
   }
 
   destroy() {
+    if (!this.el) {
+      return;
+    }
+
     this.eventListeners.forEach(([type, handler, element]) => {
       element.removeEventListener(type, handler);
     });
