@@ -9,15 +9,15 @@ export class AddEvent {
     this.members = ["Maria", "Bob", "Alex"];
     this.days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     this.times = [
-      "10:00",
-      "11:00",
-      "12:00",
-      "13:00",
-      "14:00",
-      "15:00",
-      "16:00",
-      "17:00",
-      "18:00",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
     ];
     this.calendarEvents = JSON.parse(localStorage.getItem("events")) || [];
   }
@@ -25,19 +25,19 @@ export class AddEvent {
   get template() {
     const membersElements = this.members.map((member) => {
       return `
-        <option>${member}</option>
+        <option class="member" value="${member}">${member}</option>
       `;
       }).join("");
 
     const daysElements = this.days.map((day) => {
       return `
-      <option>${day}</option>
+      <option value="${day.toLowerCase()}">${day}</option>
       `;
       }).join("");
 
     const timeElements = this.times.map((time) => {
       return `
-      <option>${time}</option>
+      <option value="${time}">${time}:00</option>
       `;
       }).join("");
 
@@ -53,9 +53,9 @@ export class AddEvent {
           </div>
           <div class="field">
               <div class="control is-expanded">
-                  <div class="select is-fullwidth">
-                      <select id="members">
-                          <option>All members</option>
+                  <div class="select is-fullwidth is-multiple">
+                      <select id="members" multiple size="4">
+                          <option selected>All members</option>
                           ${membersElements}
                       </select>
                   </div>
@@ -106,6 +106,7 @@ export class AddEvent {
     this.createEvent = this.el.querySelector("#create-event");
     this.eventName = document.querySelector("#event-name");
     this.members = document.querySelector("#members");
+    this.memberOptions = document.querySelectorAll(".member");
     this.weekday = document.querySelector("#weekday");
     this.time = document.querySelector("#time");
 
@@ -124,8 +125,8 @@ export class AddEvent {
   }
 
   checkDate() {
-    const dateInfo = this.calendarEvents.find((item, key) => {
-      return item.weekday === weekday.value && item.time === time.value;
+    const dateInfo = this.calendarEvents.find(item => {
+      return item.weekday === this.weekday.value && item.time === this.time.value;
     });
 
     if (this.eventName.value.length <= 3) {
@@ -156,19 +157,22 @@ export class AddEvent {
       document.querySelector("#header"),
       textValue,
       booleanValue,
-      5000
+      3000
     );
     
     this.notification.render();
   }
 
   addEvent() {
+   
+    const members  = Array.prototype.filter.apply(this.memberOptions, [item => item.selected]).map(item => item.value);
+
     const event = {
       eventName: this.eventName.value,
       members:
         this.members.value === "All members"
           ? ["Maria", "Bob", "Alex"]
-          : [this.members.value],
+          : members,
       weekday: this.weekday.value.toLowerCase(),
       time: this.time.value.replace(/(:00)/, ""),
       id: this.weekday.value.toLowerCase() + "-" + this.time.value.replace(/(:00)/, ""),

@@ -8,7 +8,6 @@ export class Calendar {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
-    this.calendarEvents = JSON.parse(localStorage.getItem("events")) || [];
   }
 
   get template() {
@@ -120,6 +119,7 @@ export class Calendar {
     this.el = document.createElement("div");
     this.el.classList.add("card");
     this.el.classList.add("calendar");
+    this.calendarEvents = JSON.parse(localStorage.getItem("events")) || [];
   }
 
   initAddEvent() {
@@ -159,7 +159,7 @@ export class Calendar {
       let str = "";
       str = item.weekday + "-" + item.time;
       this.container = document.querySelector("#" + str.toLowerCase());
-      const allCalendarEvents = new Event(this.container,  item.members, item.id, item.eventName)
+      const allCalendarEvents = new Event(this.container,  item.members, item.id, item.eventName, this.render.bind(this))
       allCalendarEvents.render()
     })
   }

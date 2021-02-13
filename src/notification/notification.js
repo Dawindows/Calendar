@@ -10,7 +10,7 @@ export class Notification {
 
   get template() {
     return `    
-        <div class="notification">
+        <div class="notification is-light">
             <button id="delete-notification" class="delete is-medium"></button>
             <div>${this.text}<div>
         </div>      

@@ -1,22 +1,27 @@
 import { Modal } from "../modal/modal.js";
 
 export class Event {
-  constructor(parent, members, id, eventName) {
+  constructor(parent, members, id, eventName, eventCallback) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
     this.members = members;
     this.id = id;
-    this.eventName = eventName
+    this.eventCallback = eventCallback;
+    this.eventName = eventName;
     this.calendarEvents = JSON.parse(localStorage.getItem("events")) || [];
   }
 
   get template() {
     return `
-        <div class="message is-link ${this.members.join(" ")}" data-item="${this.id}">
+        <div class="message is-info ${this.members.join(" ")}" data-item="${
+      this.id
+    }">
         <span class="message-header">
             ${this.eventName}
-            <button class="delete-event delete is-small" event-id="${this.id}"></button>
+            <button class="delete-event delete is-small" event-id="${
+              this.id
+            }"></button>
         </span>
         </div>
     `;
@@ -29,11 +34,13 @@ export class Event {
   initEventListeners() {
     this.deleteButton = this.el.querySelector(".delete-event");
 
-      const id = this.deleteButton.getAttribute("event-id");
-      const listenerBtn = this.deleteButton.addEventListener("click", this.openConfirmationModal.bind(this, id));
+    const id = this.deleteButton.getAttribute("event-id");
+    const listenerBtn = this.deleteButton.addEventListener(
+      "click",
+      this.openConfirmationModal.bind(this, id)
+    );
 
-      this.eventListeners.push(["click", listenerBtn, this.deleteButton]);
-     
+    this.eventListeners.push(["click", listenerBtn, this.deleteButton]);
   }
 
   openConfirmationModal(eventId) {
@@ -107,23 +114,24 @@ export class Event {
     function handlerDrop(event) {
       const dragFlag = event.dataTransfer.getData("dragItem");
       const eventTargetId = event.target.id;
-      self.updateIvent(eventTargetId, dragFlag)
 
-      const dragItem = document.querySelector(`[data-item="${dragFlag}"]`);
-      this.append(dragItem);
+      if (eventTargetId) {
+        self.updateEvent(eventTargetId, dragFlag);
+      }
     }
   }
 
-
-  updateIvent(eventNewId, eventPriviousId) {
-    const eventFromlocalStorage = this.calendarEvents.find(item => item.id === eventPriviousId);
+  updateEvent(eventNewId, eventPriviousId) {
+    const eventFromlocalStorage = this.calendarEvents.find(
+      (item) => item.id === eventPriviousId
+    );
     eventFromlocalStorage.id = eventNewId;
-    [eventFromlocalStorage.weekday, eventFromlocalStorage.time] = eventNewId.split("-");
+    [
+      eventFromlocalStorage.weekday,
+      eventFromlocalStorage.time,
+    ] = eventNewId.split("-");
     localStorage.setItem("events", JSON.stringify(this.calendarEvents));
-    debugger;
-    const a = this.el.querySelector(".message");
-    a.dataset.item = eventNewId;
-      console.log(JSON.parse(localStorage.getItem("events")));  
+    this.eventCallback();
   }
 
   render() {
@@ -133,6 +141,7 @@ export class Event {
 
     this.init();
     this.parent.appendChild(this.el);
+    this.parent.classList.remove("container");
     this.el.innerHTML = this.template;
     this.initEventListeners();
     this.dropsDrag();

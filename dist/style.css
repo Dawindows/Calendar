@@ -22,20 +22,6 @@ body {
   #calendar-header .card-header-title span {
     font-size: 24px; }
 
-.show {
-  display: block; }
-
-.hide {
-  display: none; }
-
-.message-header {
-  height: 32px;
-  padding: 4px;
-  word-break: break-all;
-  font-weight: 500;
-  font-size: 14px;
-  border-radius: 0; }
-
 .selected {
   opacity: 0.6; }
 
@@ -44,4 +30,13 @@ body {
 
 .notification {
   border-radius: 0; }
+
+.message-header {
+  height: 32px;
+  padding: 4px;
+  word-break: break-all;
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: 0;
+  cursor: pointer; }
 
