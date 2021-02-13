@@ -43,7 +43,7 @@ export class Event {
     this.eventListeners.push(["click", listenerBtn, this.deleteButton]);
   }
 
-  openConfirmationModal(eventId) {
+  openConfirmationModal() {
     const myModal = new Modal(
       document.body,
       `Are you sure you want to delete "${this.eventName}" event?`,
@@ -91,11 +91,11 @@ export class Event {
       this.classList.add("drag-item-start");
     }
 
-    function handlerDragend(event) {
+    function handlerDragend() {
       this.classList.remove("drag-item-start");
     }
 
-    function handlerDrag(event) {}
+    function handlerDrag() {}
 
     //dragzone
     function handlerDragsenter(event) {
@@ -103,7 +103,7 @@ export class Event {
       this.classList.add("drag-zone-active");
     }
 
-    function handlerDragleave(event) {
+    function handlerDragleave() {
       this.classList.remove("drag-zone-active");
     }
 

@@ -1,7 +1,5 @@
 import { AddEvent } from "../add-event/add-event-component.js";
-import { Modal } from "../modal/modal.js";
 import { Event } from "../event/event.js";
-
 
 export class Calendar {
   constructor(parent) {
@@ -124,7 +122,7 @@ export class Calendar {
 
   initAddEvent() {
     this.addEvent = document.querySelector("#add-event");
-    const listenerAddEvent = this.addEvent.addEventListener("click", (event) => {
+    const listenerAddEvent = this.addEvent.addEventListener("click", () => {
       const addEvent = new AddEvent(document.body);
       addEvent.render();
       this.destroy();
@@ -135,7 +133,7 @@ export class Calendar {
 
   calendarFilter() {
     const filterMenu = document.querySelector("#user");
-    const listenerFilterMenu = filterMenu.addEventListener("change", (event) => {
+    filterMenu.addEventListener("change", () => {
       const getContentMessage = document.querySelectorAll(".message");
       getContentMessage.forEach((item) => {
         item.classList.remove("show", "hide");
@@ -155,7 +153,7 @@ export class Calendar {
   }
 
   renderEvents() {
-    this.calendarEvents.forEach((item, key) => {
+    this.calendarEvents.forEach((item) => {
       let str = "";
       str = item.weekday + "-" + item.time;
       this.container = document.querySelector("#" + str.toLowerCase());
