@@ -23,7 +23,7 @@ export class Modal {
                 </section>
                 <footer class="modal-card-foot is-pulled-right">
                     <button id="button-ok" class="button is-success">OK</button>
-                    <button id="button-cancle" class="button">Cancel</button>
+                    <button id="button-cancel" class="button">Cancel</button>
                 </footer>
             </div>
         </div>
@@ -36,10 +36,10 @@ export class Modal {
   }
 
   afterInit() {
-    this.buttonCancle = document.querySelector("#button-cancle");
+    this.buttonCancel = document.querySelector("#button-cancel");
     this.buttonOk = document.querySelector("#button-ok");
 
-    const listenerCancel = this.buttonCancle.addEventListener("click", () => {
+    const listenerCancel = this.buttonCancel.addEventListener("click", () => {
       this.modalCallback(false);
       this.destroy();
     });
@@ -49,7 +49,7 @@ export class Modal {
       this.destroy();
     });
 
-    this.eventListeners.push(["click", listenerCancel, this.buttonCancle]);
+    this.eventListeners.push(["click", listenerCancel, this.buttonCancel]);
     this.eventListeners.push(["click", listenerOk, this.buttonOk]);
     
   }

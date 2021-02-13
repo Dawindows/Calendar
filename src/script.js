@@ -8,5 +8,5 @@ import { Calendar } from "./calendar/calendar.js"
 import { Notification } from "./notification/notification.js"
 
 
-const caledar = new Calendar(document.body);
-caledar.render();
+const calendar = new Calendar(document.body);
+calendar.render();

@@ -23,7 +23,7 @@ export class AddEvent {
   }
 
   get template() {
-    const memersElements = this.members.map((member) => {
+    const membersElements = this.members.map((member) => {
       return `
         <option>${member}</option>
       `;
@@ -56,7 +56,7 @@ export class AddEvent {
                   <div class="select is-fullwidth">
                       <select id="members">
                           <option>All members</option>
-                          ${memersElements}
+                          ${membersElements}
                       </select>
                   </div>
               </div>
@@ -109,10 +109,10 @@ export class AddEvent {
     this.weekdays = document.querySelector("#weekdays");
     this.time = document.querySelector("#time");
 
-    const listnerCancee = this.cancel.addEventListener("click", () => {
+    const listenerCancel = this.cancel.addEventListener("click", () => {
       this.destroy();
-      const caledar = new Calendar(document.body);
-      caledar.render();
+      const calendar = new Calendar(document.body);
+      calendar.render();
     });
 
     const listenerCreateEvent = this.createEvent.addEventListener("click", () => {
@@ -120,7 +120,7 @@ export class AddEvent {
     });
 
     this.eventListeners.push(["click", listenerCreateEvent, this.createEvent]);
-    this.eventListeners.push(["click", listnerCancee, this.cancel]);
+    this.eventListeners.push(["click", listenerCancel, this.cancel]);
   }
 
   checkDate() {
@@ -141,8 +141,8 @@ export class AddEvent {
     } else {
       this.addEvent();
       this.destroy();
-      const caledar = new Calendar(document.body);
-      caledar.render();
+      const calendar = new Calendar(document.body);
+      calendar.render();
       this.renderNotification("Event created", true);
     }
   }
