@@ -32,26 +32,25 @@ export class Modal {
   }
 
   init() {
-    this.el = document.createElement("div");
+    this.el = document.createElement('div');
   }
 
   afterInit() {
-    this.buttonCancel = document.querySelector("#button-cancel");
-    this.buttonOk = document.querySelector("#button-ok");
+    this.buttonCancel = document.querySelector('#button-cancel');
+    this.buttonOk = document.querySelector('#button-ok');
 
-    const listenerCancel = this.buttonCancel.addEventListener("click", () => {
+    const listenerCancel = this.buttonCancel.addEventListener('click', () => {
       this.modalCallback(false);
       this.destroy();
     });
 
-    const listenerOk = this.buttonOk.addEventListener("click", () => {
+    const listenerOk = this.buttonOk.addEventListener('click', () => {
       this.modalCallback(true);
       this.destroy();
     });
 
-    this.eventListeners.push(["click", listenerCancel, this.buttonCancel]);
-    this.eventListeners.push(["click", listenerOk, this.buttonOk]);
-    
+    this.eventListeners.push(['click', listenerCancel, this.buttonCancel]);
+    this.eventListeners.push(['click', listenerOk, this.buttonOk]);
   }
 
   render() {

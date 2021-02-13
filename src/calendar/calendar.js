@@ -1,14 +1,31 @@
-import { AddEvent } from "../add-event/add-event-component.js";
-import { Event } from "../event/event.js";
+import { AddEvent } from '../add-event/add-event';
+import { Event } from '../event/event';
+import { DAYS } from '../constants/days';
+import { TIMES } from '../constants/times';
 
 export class Calendar {
   constructor(parent) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
+    this.days = DAYS;
+    this.times = TIMES;
   }
 
   get template() {
+    const table = this.times.map((time) => {
+      const items = this.days.map((day) => (
+        `<td id="${day.toLowerCase()}-${time}" class="container"></td>`
+      )).join('');
+
+      return `
+        <tr>
+          <td>${time}:00</td>
+          ${items}
+        </tr>
+      `;
+    }).join('');
+
     return `
       <div id="calendar" class="card-content">
         <div id="calendar-header">
@@ -36,117 +53,46 @@ export class Calendar {
                 <th>Thu</th>
                 <th>Fri</th>
             </tr>
-            <tr>
-                <td>10:00</td>
-                <td id="monday-10" class="container"></td>
-                <td id="tuesday-10" class="container"></td>
-                <td id="wednesday-10" class="container"></td>
-                <td id="thursday-10" class="container"></td>
-                <td id="friday-10" class="container"></td>
-            </tr>
-            <tr>
-                <td>11:00</td>
-                <td id="monday-11" class="container"></td>
-                <td id="tuesday-11" class="container"></td>
-                <td id="wednesday-11" class="container"></td>
-                <td id="thursday-11" class="container"></td>
-                <td id="friday-11" class="container"></td>
-            </tr>
-            <tr>
-                <td>12:00</td>
-                <td id="monday-12" class="container"></td>
-                <td id="tuesday-12" class="container"></td>
-                <td id="wednesday-12" class="container"></td>
-                <td id="thursday-12" class="container"></td>
-                <td id="friday-12" class="container"></td>
-            </tr>
-            <tr>
-                <td>13:00</td>
-                <td id="monday-13" class="container"></td>
-                <td id="tuesday-13" class="container"></td>
-                <td id="wednesday-13" class="container"></td>
-                <td id="thursday-13" class="container"></td>
-                <td id="friday-13" class="container"></td>
-            </tr>
-            <tr>
-                <td>14:00</td>
-                <td id="monday-14" class="container"></td>
-                <td id="tuesday-14" class="container"></td>
-                <td id="wednesday-14" class="container"></td>
-                <td id="thursday-14" class="container"></td>
-                <td id="friday-14" class="container"></td>
-            </tr>
-            <tr>
-                <td>15:00</td>
-                <td id="monday-15" class="container"></td>
-                <td id="tuesday-15" class="container"></td>
-                <td id="wednesday-15" class="container"></td>
-                <td id="thursday-15" class="container"></td>
-                <td id="friday-15" class="container"></td>
-            </tr>
-            <tr>
-                <td>16:00</td>
-                <td id="monday-16" class="container"></td>
-                <td id="tuesday-16" class="container"></td>
-                <td id="wednesday-16" class="container"></td>
-                <td id="thursday-16" class="container"></td>
-                <td id="friday-16" class="container"></td>
-            </tr>
-            <tr>
-                <td>17:00</td>
-                <td id="monday-17" class="container"></td>
-                <td id="tuesday-17" class="container"></td>
-                <td id="wednesday-17 class="container"></td>
-                <td id="thursday-17" class="container"></td>
-                <td id="friday-17" class="container"></td>
-            </tr>
-            <tr>
-                <td>18:00</td>
-                <td id="monday-18" class="container"></td>
-                <td id="tuesday-18" class="container"></td>
-                <td id="wednesday-18" class="container"></td>
-                <td id="thursday-18" class="container"></td>
-                <td id="friday-18" class="container"></td>
-            </tr>  
+            ${table}
         </table>
       </div>
           `;
   }
 
   init() {
-    this.el = document.createElement("div");
-    this.el.classList.add("card");
-    this.el.classList.add("calendar");
-    this.calendarEvents = JSON.parse(localStorage.getItem("events")) || [];
+    this.el = document.createElement('div');
+    this.el.classList.add('card');
+    this.el.classList.add('calendar');
+    this.calendarEvents = JSON.parse(localStorage.getItem('events')) || [];
   }
 
   initAddEvent() {
-    this.addEvent = document.querySelector("#add-event");
-    const listenerAddEvent = this.addEvent.addEventListener("click", () => {
+    this.addEvent = document.querySelector('#add-event');
+    const listenerAddEvent = this.addEvent.addEventListener('click', () => {
       const addEvent = new AddEvent(document.body);
       addEvent.render();
       this.destroy();
     });
 
-    this.eventListeners.push(["click", listenerAddEvent, this.addEvent]);
+    this.eventListeners.push(['click', listenerAddEvent, this.addEvent]);
   }
 
   calendarFilter() {
-    const filterMenu = document.querySelector("#user");
-    filterMenu.addEventListener("change", () => {
-      const getContentMessage = document.querySelectorAll(".message");
+    const filterMenu = document.querySelector('#user');
+    filterMenu.addEventListener('change', () => {
+      const getContentMessage = document.querySelectorAll('.message');
       getContentMessage.forEach((item) => {
-        item.classList.remove("show", "hide");
-        item.classList.add("hide");
+        item.classList.remove('show', 'hide');
+        item.classList.add('hide');
 
-        if (filterMenu.value === "All members") {
-          item.classList.remove("show", "hide");
-          item.classList.add("show");
+        if (filterMenu.value === 'All members') {
+          item.classList.remove('show', 'hide');
+          item.classList.add('show');
         }
 
         if (item.classList.contains(filterMenu.value)) {
-          item.classList.remove("show", "hide");
-          item.classList.add("show");
+          item.classList.remove('show', 'hide');
+          item.classList.add('show');
         }
       });
     });
@@ -154,12 +100,17 @@ export class Calendar {
 
   renderEvents() {
     this.calendarEvents.forEach((item) => {
-      let str = "";
-      str = item.weekday + "-" + item.time;
-      this.container = document.querySelector("#" + str.toLowerCase());
-      const allCalendarEvents = new Event(this.container,  item.members, item.id, item.eventName, this.render.bind(this))
-      allCalendarEvents.render()
-    })
+      const id = `${item.weekday}-${item.time}`;
+      this.container = document.querySelector(`#${id.toLowerCase()}`);
+      const allCalendarEvents = new Event(
+        this.container,
+        item.members,
+        item.id,
+        item.eventName,
+        this.render.bind(this),
+      );
+      allCalendarEvents.render();
+    });
   }
 
   render() {

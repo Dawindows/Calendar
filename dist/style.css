@@ -25,6 +25,12 @@ body {
 .selected {
   opacity: 0.6; }
 
+.hide {
+  display: none; }
+
+.show {
+  display: block; }
+
 .modal-card {
   width: 404px; }
 

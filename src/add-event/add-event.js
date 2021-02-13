@@ -1,45 +1,36 @@
-import { Calendar } from "../calendar/calendar.js";
-import { Notification } from "../notification/notification.js";
+import { Calendar } from '../calendar/calendar';
+import { DAYS } from '../constants/days';
+import { TIMES } from '../constants/times';
+import { Notification } from '../notification/notification';
 
 export class AddEvent {
   constructor(parent) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
-    this.members = ["Maria", "Bob", "Alex"];
-    this.days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-    this.times = [
-      "10",
-      "11",
-      "12",
-      "13",
-      "14",
-      "15",
-      "16",
-      "17",
-      "18",
-    ];
-    this.calendarEvents = JSON.parse(localStorage.getItem("events")) || [];
+    this.members = ['Maria', 'Bob', 'Alex'];
+    this.days = DAYS;
+    this.times = TIMES;
   }
 
   get template() {
-    const membersElements = this.members.map((member) => {
-      return `
+    const membersElements = this.members.map((member) => (
+      `
         <option class="member" value="${member}">${member}</option>
-      `;
-      }).join("");
+      `
+    )).join('');
 
-    const daysElements = this.days.map((day) => {
-      return `
-      <option value="${day.toLowerCase()}">${day}</option>
-      `;
-      }).join("");
+    const daysElements = this.days.map((day) => (
+      `
+        <option value="${day.toLowerCase()}">${day}</option>
+      `
+    )).join('');
 
-    const timeElements = this.times.map((time) => {
-      return `
-      <option value="${time}">${time}:00</option>
-      `;
-      }).join("");
+    const timeElements = this.times.map((time) => (
+      `
+        <option value="${time}">${time}:00</option>
+      `
+    )).join('');
 
     return `
       <div class="card-header">
@@ -96,55 +87,56 @@ export class AddEvent {
   }
 
   init() {
-    this.el = document.createElement("div");
-    this.el.classList.add("card");
-    this.el.classList.add("add-event");
+    this.el = document.createElement('div');
+    this.el.classList.add('card');
+    this.el.classList.add('add-event');
+    this.calendarEvents = JSON.parse(localStorage.getItem('events')) || [];
   }
 
   afterInit() {
-    this.cancel = this.el.querySelector("#cancel");
-    this.createEvent = this.el.querySelector("#create-event");
-    this.eventName = document.querySelector("#event-name");
-    this.members = document.querySelector("#members");
-    this.memberOptions = document.querySelectorAll(".member");
-    this.weekday = document.querySelector("#weekday");
-    this.time = document.querySelector("#time");
+    this.cancel = this.el.querySelector('#cancel');
+    this.createEvent = this.el.querySelector('#create-event');
+    this.eventName = document.querySelector('#event-name');
+    this.members = document.querySelector('#members');
+    this.memberOptions = document.querySelectorAll('.member');
+    this.weekday = document.querySelector('#weekday');
+    this.time = document.querySelector('#time');
 
-    const listenerCancel = this.cancel.addEventListener("click", () => {
+    const listenerCancel = this.cancel.addEventListener('click', () => {
       this.destroy();
       const calendar = new Calendar(document.body);
       calendar.render();
     });
 
-    const listenerCreateEvent = this.createEvent.addEventListener("click", () => {
-        this.checkDate();
+    const listenerCreateEvent = this.createEvent.addEventListener('click', () => {
+      this.checkDate();
     });
 
-    this.eventListeners.push(["click", listenerCreateEvent, this.createEvent]);
-    this.eventListeners.push(["click", listenerCancel, this.cancel]);
+    this.eventListeners.push(['click', listenerCreateEvent, this.createEvent]);
+    this.eventListeners.push(['click', listenerCancel, this.cancel]);
   }
 
   checkDate() {
-    const dateInfo = this.calendarEvents.find(item => {
-      return item.weekday === this.weekday.value && item.time === this.time.value;
-    });
+    const dateInfo = this.calendarEvents.find((item) => (
+      item.weekday === this.weekday.value && item.time === this.time.value
+    ));
 
     if (this.eventName.value.length <= 3) {
       this.renderNotification(
-        "Filed to create an event. Event name is too short",
-        false
+        'Filed to create an event. Event name is too short',
+        false,
       );
     } else if (dateInfo) {
       this.renderNotification(
-        "Filed to create an event. Time slot is already booked",
-        false
+        'Filed to create an event. Time slot is already booked',
+        false,
       );
     } else {
       this.addEvent();
       this.destroy();
       const calendar = new Calendar(document.body);
       calendar.render();
-      this.renderNotification("Event created", true);
+      this.renderNotification('Event created', true);
     }
   }
 
@@ -152,34 +144,32 @@ export class AddEvent {
     if (this.notification) {
       this.notification.destroy();
     }
-    
     this.notification = new Notification(
-      document.querySelector("#header"),
+      document.querySelector('#header'),
       textValue,
       booleanValue,
-      3000
+      3000,
     );
-    
     this.notification.render();
   }
 
   addEvent() {
-   
-    const members  = Array.prototype.filter.apply(this.memberOptions, [item => item.selected]).map(item => item.value);
-
+    const members = Array.prototype.filter
+      .apply(this.memberOptions, [(item) => item.selected])
+      .map((item) => item.value);
     const event = {
       eventName: this.eventName.value,
       members:
-        this.members.value === "All members"
-          ? ["Maria", "Bob", "Alex"]
+        this.members.value === 'All members'
+          ? ['Maria', 'Bob', 'Alex']
           : members,
       weekday: this.weekday.value.toLowerCase(),
-      time: this.time.value.replace(/(:00)/, ""),
-      id: this.weekday.value.toLowerCase() + "-" + this.time.value.replace(/(:00)/, ""),
+      time: this.time.value.replace(/(:00)/, ''),
+      id: `${this.weekday.value.toLowerCase()} '-'  ${this.time.value.replace(/(:00)/, '')}`,
     };
 
     this.calendarEvents.push(event);
-    localStorage.setItem("events", JSON.stringify(this.calendarEvents));
+    localStorage.setItem('events', JSON.stringify(this.calendarEvents));
   }
 
   render() {

@@ -1,4 +1,4 @@
-import { Modal } from "../modal/modal.js";
+import { Modal } from '../modal/modal';
 
 export class Event {
   constructor(parent, members, id, eventName, eventCallback) {
@@ -9,38 +9,34 @@ export class Event {
     this.id = id;
     this.eventCallback = eventCallback;
     this.eventName = eventName;
-    this.calendarEvents = JSON.parse(localStorage.getItem("events")) || [];
+    this.calendarEvents = JSON.parse(localStorage.getItem('events')) || [];
   }
 
   get template() {
     return `
-        <div class="message is-info ${this.members.join(" ")}" data-item="${
-      this.id
-    }">
+        <div class="message is-info ${this.members.join(' ')}" data-item="${this.id}" draggable="true">
         <span class="message-header">
             ${this.eventName}
-            <button class="delete-event delete is-small" event-id="${
-              this.id
-            }"></button>
+            <button class="delete-event delete is-small" event-id="${this.id}"></button>
         </span>
         </div>
     `;
   }
 
   init() {
-    this.el = document.createElement("div");
+    this.el = document.createElement('div');
   }
 
   initEventListeners() {
-    this.deleteButton = this.el.querySelector(".delete-event");
+    this.deleteButton = this.el.querySelector('.delete-event');
 
-    const id = this.deleteButton.getAttribute("event-id");
+    const id = this.deleteButton.getAttribute('event-id');
     const listenerBtn = this.deleteButton.addEventListener(
-      "click",
-      this.openConfirmationModal.bind(this, id)
+      'click',
+      this.openConfirmationModal.bind(this, id),
     );
 
-    this.eventListeners.push(["click", listenerBtn, this.deleteButton]);
+    this.eventListeners.push(['click', listenerBtn, this.deleteButton]);
   }
 
   openConfirmationModal() {
@@ -52,59 +48,43 @@ export class Event {
         if (del) {
           this.deleteCallback();
         }
-      }
+      },
     );
     myModal.render();
   }
 
   deleteCallback() {
     const index = this.calendarEvents.findIndex(
-      (item) => this.id === item.id.toString()
+      (item) => this.id === item.id.toString(),
     );
     this.calendarEvents.splice(index, 1);
-    localStorage.setItem("events", JSON.stringify(this.calendarEvents));
+    localStorage.setItem('events', JSON.stringify(this.calendarEvents));
     this.destroy();
   }
 
   dropsDrag() {
-    const dragItems = document.querySelectorAll(".message");
-    const dragZones = document.querySelectorAll(".container");
+    const dragItems = document.querySelectorAll('.message');
+    const dragZones = document.querySelectorAll('.container');
     const self = this;
 
-    dragItems.forEach((dragItem) => {
-      dragItem.draggable = true;
-      dragItem.addEventListener("dragstart", handlerDragstart);
-      dragItem.addEventListener("dragend", handlerDragend);
-      dragItem.addEventListener("drag", handlerDrag);
-    });
-
-    dragZones.forEach((dragZones) => {
-      dragZones.addEventListener("dragenter", handlerDragsenter);
-      dragZones.addEventListener("dragleave", handlerDragleave);
-      dragZones.addEventListener("dragover", handlerDragover);
-      dragZones.addEventListener("drop", handlerDrop);
-    });
-
-    //dragitem
     function handlerDragstart(event) {
-      event.dataTransfer.setData("dragItem", this.dataset.item);
-      this.classList.add("drag-item-start");
+      event.dataTransfer.setData('dragItem', this.dataset.item);
+      this.classList.add('drag-item-start');
     }
 
     function handlerDragend() {
-      this.classList.remove("drag-item-start");
+      this.classList.remove('drag-item-start');
     }
 
     function handlerDrag() {}
 
-    //dragzone
     function handlerDragsenter(event) {
       event.preventDefault();
-      this.classList.add("drag-zone-active");
+      this.classList.add('drag-zone-active');
     }
 
     function handlerDragleave() {
-      this.classList.remove("drag-zone-active");
+      this.classList.remove('drag-zone-active');
     }
 
     function handlerDragover(event) {
@@ -112,25 +92,38 @@ export class Event {
     }
 
     function handlerDrop(event) {
-      const dragFlag = event.dataTransfer.getData("dragItem");
+      const dragFlag = event.dataTransfer.getData('dragItem');
       const eventTargetId = event.target.id;
 
       if (eventTargetId) {
         self.updateEvent(eventTargetId, dragFlag);
       }
     }
+
+    dragItems.forEach((dragItem) => {
+      dragItem.addEventListener('dragstart', handlerDragstart);
+      dragItem.addEventListener('dragend', handlerDragend);
+      dragItem.addEventListener('drag', handlerDrag);
+    });
+
+    dragZones.forEach((dragZone) => {
+      dragZone.addEventListener('dragenter', handlerDragsenter);
+      dragZone.addEventListener('dragleave', handlerDragleave);
+      dragZone.addEventListener('dragover', handlerDragover);
+      dragZone.addEventListener('drop', handlerDrop);
+    });
   }
 
   updateEvent(eventNewId, eventPriviousId) {
     const eventFromlocalStorage = this.calendarEvents.find(
-      (item) => item.id === eventPriviousId
+      (item) => item.id === eventPriviousId,
     );
     eventFromlocalStorage.id = eventNewId;
     [
       eventFromlocalStorage.weekday,
       eventFromlocalStorage.time,
-    ] = eventNewId.split("-");
-    localStorage.setItem("events", JSON.stringify(this.calendarEvents));
+    ] = eventNewId.split('-');
+    localStorage.setItem('events', JSON.stringify(this.calendarEvents));
     this.eventCallback();
   }
 
@@ -141,7 +134,7 @@ export class Event {
 
     this.init();
     this.parent.appendChild(this.el);
-    this.parent.classList.remove("container");
+    this.parent.classList.remove('container');
     this.el.innerHTML = this.template;
     this.initEventListeners();
     this.dropsDrag();

@@ -18,26 +18,29 @@ export class Notification {
   }
 
   renderNotification() {
-    const elNotification = document.querySelector(".notification");
-    this.success ? elNotification.classList.add("is-primary") : elNotification.classList.add("is-danger");
-      
-    this.timer = setTimeout(() => {this.destroy()}, this.duration);
+    const elNotification = document.querySelector('.notification');
+    if (this.success) {
+      elNotification.classList.add('is-primary');
+    } else {
+      elNotification.classList.add('is-danger');
+    }
+    this.timer = setTimeout(() => { this.destroy(); }, this.duration);
   }
 
   init() {
-    this.el = document.createElement("div");
-    this.el.classList.add("content-notification")
+    this.el = document.createElement('div');
+    this.el.classList.add('content-notification');
   }
 
   afterInit() {
-    this.deleteNotification = document.querySelector("#delete-notification");
+    this.deleteNotification = document.querySelector('#delete-notification');
 
-    const listenerDeleteNotification = this.deleteNotification.addEventListener("click", () => { 
-        clearTimeout(this.timer);
-        this.destroy(); 
+    const listenerDeleteNotification = this.deleteNotification.addEventListener('click', () => {
+      clearTimeout(this.timer);
+      this.destroy();
     });
 
-    this.eventListeners.push(["click", listenerDeleteNotification, this.deleteNotification]);
+    this.eventListeners.push(['click', listenerDeleteNotification, this.deleteNotification]);
   }
 
   render() {
