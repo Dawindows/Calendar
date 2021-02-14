@@ -78,7 +78,7 @@ export class Calendar {
   }
 
   calendarFilter() {
-    const filterMenu = document.querySelector('#user');
+    const filterMenu = this.el.querySelector('#user');
     filterMenu.addEventListener('change', () => {
       const getContentMessage = document.querySelectorAll('.message');
       getContentMessage.forEach((item) => {

@@ -11,6 +11,7 @@ module.exports = {
     },
     "rules": {
         "linebreak-style": ["error", "windows"],
-        "import/prefer-default-export": "off"
+        "import/prefer-default-export": "off",
+        "import/no-cycle": "off"
     }
 };
