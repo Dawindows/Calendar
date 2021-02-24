@@ -64,10 +64,11 @@ export class Calendar {
             </tr>
             ${table}
         </table>
-      </div>
-      <div class=calendar-footer>
+        <div class=calendar-footer>
           <a id="entrance">sign out</a>
+        </div>
       </div>
+
     `;
   }
 
