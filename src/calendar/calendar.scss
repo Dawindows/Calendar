@@ -21,6 +21,13 @@
 	}
 }
 
+	
+.calendar-footer {
+	display: flex;
+	justify-content: flex-end;
+	padding: 0 12px 12px 0;
+}
+
 .selected {
 	opacity: 0.6;
 }

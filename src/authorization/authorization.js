@@ -1,35 +1,42 @@
-import './modal.scss';
+import { Calendar } from '../calendar/calendar';
+import { Members } from '../members/members.service';
 
-export class Modal {
-  constructor(parent, text, title, modalCallback) {
+export class Authorization {
+  constructor(parent) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
-    this.text = text;
-    this.title = title;
-    this.modalCallback = modalCallback;
+    this.members = Members;
   }
 
   get template() {
+    const membersElements = this.members.map((member) => (`
+          <option class="member" value="${member.name}">${member.name}</option>
+    `
+    )).join('');
+
     return `
-        <div class="modal is-active">
+        <div class="modal is-active" id="authorization">
             <div class="modal-background"></div>
             <div class="modal-card">
                 <header class="modal-card-head">
                     <p class="modal-card-title">
-                       Delete "${this.title}" event
+                       Please authorise
                     </p>
                 </header>
                 <section class="modal-card-body">
-                    ${this.text}
+                    <div id="event" class="select is-fullwidth">
+                        <select id="user">
+                            ${membersElements}
+                        </select>
+                    </div>
                 </section>
                 <footer class="modal-card-foot is-pulled-right">
-                    <button id="button-ok" class="button is-success">OK</button>
-                    <button id="button-cancel" class="button">Cancel</button>
+                    <button id="authorization-button-ok" class="button is-success">OK</button>
                 </footer>
             </div>
         </div>
-        
+   
     `;
   }
 
@@ -38,20 +45,16 @@ export class Modal {
   }
 
   afterInit() {
-    this.buttonCancel = document.querySelector('#button-cancel');
-    this.buttonOk = document.querySelector('#button-ok');
-
-    const listenerCancel = this.buttonCancel.addEventListener('click', () => {
-      this.modalCallback(false);
-      this.destroy();
-    });
+    this.buttonOk = document.querySelector('#authorization-button-ok');
+    const nameUser = this.el.querySelector('#user');
 
     const listenerOk = this.buttonOk.addEventListener('click', () => {
-      this.modalCallback(true);
+      const indexUser = this.members.find((index) => index.name === nameUser.value);
       this.destroy();
+      const calendar = new Calendar(document.body, indexUser.isAdmin);
+      calendar.render();
     });
 
-    this.eventListeners.push(['click', listenerCancel, this.buttonCancel]);
     this.eventListeners.push(['click', listenerOk, this.buttonOk]);
   }
 

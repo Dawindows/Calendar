@@ -1,7 +1,8 @@
 import { Modal } from '../modal/modal';
+import './event.scss';
 
 export class Event {
-  constructor(parent, members, id, eventName, eventCallback) {
+  constructor(parent, members, id, eventName, eventCallback, isAdmin) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
@@ -9,7 +10,7 @@ export class Event {
     this.id = id;
     this.eventCallback = eventCallback;
     this.eventName = eventName;
-    this.calendarEvents = JSON.parse(localStorage.getItem('events')) || [];
+    this.isAdmin = isAdmin;
   }
 
   get template() {
@@ -25,6 +26,7 @@ export class Event {
 
   init() {
     this.el = document.createElement('div');
+    this.calendarEvents = JSON.parse(localStorage.getItem('events')) || [];
   }
 
   initEventListeners() {
@@ -39,6 +41,17 @@ export class Event {
     this.eventListeners.push(['click', listenerBtn, this.deleteButton]);
   }
 
+  checkAdmin() {
+    const buttonDeleteEvent = document.querySelectorAll('.delete-event');
+    if (!this.isAdmin) {
+      buttonDeleteEvent.forEach((item) => {
+        item.classList.add('hide');
+      });
+    } else {
+      this.dropsDrag();
+    }
+  }
+
   openConfirmationModal() {
     const myModal = new Modal(
       document.body,
@@ -50,6 +63,7 @@ export class Event {
         }
       },
     );
+
     myModal.render();
   }
 
@@ -57,6 +71,7 @@ export class Event {
     const index = this.calendarEvents.findIndex(
       (item) => this.id === item.id.toString(),
     );
+
     this.calendarEvents.splice(index, 1);
     localStorage.setItem('events', JSON.stringify(this.calendarEvents));
     this.destroy();
@@ -118,11 +133,14 @@ export class Event {
     const eventFromlocalStorage = this.calendarEvents.find(
       (item) => item.id === eventPriviousId,
     );
+
     eventFromlocalStorage.id = eventNewId;
+
     [
       eventFromlocalStorage.weekday,
       eventFromlocalStorage.time,
     ] = eventNewId.split('-');
+
     localStorage.setItem('events', JSON.stringify(this.calendarEvents));
     this.eventCallback();
   }
@@ -137,7 +155,7 @@ export class Event {
     this.parent.classList.remove('container');
     this.el.innerHTML = this.template;
     this.initEventListeners();
-    this.dropsDrag();
+    this.checkAdmin();
   }
 
   destroy() {
