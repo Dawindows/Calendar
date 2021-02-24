@@ -47,6 +47,8 @@ body {
 .calendar-footer {
   display: flex;
   justify-content: flex-end; }
+  .calendar-footer a {
+    margin-left: 12px; }
 
 .selected {
   opacity: 0.6; }

@@ -7,7 +7,7 @@ import { Authorization } from '../authorization/authorization';
 import './calendar.scss';
 
 export class Calendar {
-  constructor(parent, isAdmin) {
+  constructor(parent, isAdmin, name) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
@@ -15,6 +15,7 @@ export class Calendar {
     this.members = Members;
     this.times = TIMES;
     this.isAdmin = isAdmin;
+    this.name = name;
   }
 
   get template() {
@@ -65,6 +66,7 @@ export class Calendar {
             ${table}
         </table>
         <div class=calendar-footer>
+          <div>${this.name}</div>
           <a id="entrance">sign out</a>
         </div>
       </div>
@@ -82,7 +84,7 @@ export class Calendar {
   initAddEvent() {
     this.addEvent = document.querySelector('#add-event');
     const listenerAddEvent = this.addEvent.addEventListener('click', () => {
-      const addEvent = new AddEvent(document.body);
+      const addEvent = new AddEvent(document.body, this.name);
       addEvent.render();
       this.destroy();
     });

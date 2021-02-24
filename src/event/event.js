@@ -68,12 +68,13 @@ export class Event {
   }
 
   deleteCallback() {
-    const index = this.calendarEvents.findIndex(
+    this.calendarEventsToDelete = JSON.parse(localStorage.getItem('events')) || [];
+    const index = this.calendarEventsToDelete.findIndex(
       (item) => this.id === item.id.toString(),
     );
 
-    this.calendarEvents.splice(index, 1);
-    localStorage.setItem('events', JSON.stringify(this.calendarEvents));
+    this.calendarEventsToDelete.splice(index, 1);
+    localStorage.setItem('events', JSON.stringify(this.calendarEventsToDelete));
     this.destroy();
   }
 
@@ -130,18 +131,17 @@ export class Event {
   }
 
   updateEvent(eventNewId, eventPriviousId) {
-    const eventFromlocalStorage = this.calendarEvents.find(
+    this.calendarEventsStorge = JSON.parse(localStorage.getItem('events'));
+    const eventFromlocalStorage = this.calendarEventsStorge.find(
       (item) => item.id === eventPriviousId,
     );
-
-    eventFromlocalStorage.id = eventNewId;
 
     [
       eventFromlocalStorage.weekday,
       eventFromlocalStorage.time,
     ] = eventNewId.split('-');
 
-    localStorage.setItem('events', JSON.stringify(this.calendarEvents));
+    localStorage.setItem('events', JSON.stringify(this.calendarEventsStorge));
     this.eventCallback();
   }
 

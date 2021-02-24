@@ -51,7 +51,7 @@ export class Authorization {
     const listenerOk = this.buttonOk.addEventListener('click', () => {
       const indexUser = this.members.find((index) => index.name === nameUser.value);
       this.destroy();
-      const calendar = new Calendar(document.body, indexUser.isAdmin);
+      const calendar = new Calendar(document.body, indexUser.isAdmin, indexUser.name);
       calendar.render();
     });
 

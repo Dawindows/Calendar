@@ -6,13 +6,14 @@ import { Members } from '../members/members.service';
 import './add-event.scss';
 
 export class AddEvent {
-  constructor(parent) {
+  constructor(parent, name) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
     this.members = Members;
     this.days = DAYS;
     this.times = TIMES;
+    this.name = name;
   }
 
   get template() {
@@ -106,7 +107,7 @@ export class AddEvent {
 
     const listenerCancel = this.cancel.addEventListener('click', () => {
       this.destroy();
-      const calendar = new Calendar(document.body, true);
+      const calendar = new Calendar(document.body, true, this.name);
       calendar.render();
     });
 
@@ -136,7 +137,7 @@ export class AddEvent {
     } else {
       this.addEvent();
       this.destroy();
-      const calendar = new Calendar(document.body, true);
+      const calendar = new Calendar(document.body, true, this.name);
       calendar.render();
       this.renderNotification('Event created', true);
     }
