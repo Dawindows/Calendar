@@ -1,12 +1,12 @@
 import { Calendar } from '../calendar/calendar';
-import { Members } from '../core/service/members.service';
+import { membersService } from '../core/service/members.service';
 
 export class Authorization {
   constructor(parent) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
-    this.members = Members;
+    this.members = membersService.getAllMembers();
   }
 
   get template() {
@@ -49,10 +49,10 @@ export class Authorization {
     const nameUser = this.el.querySelector('#user');
 
     const listenerOk = this.buttonOk.addEventListener('click', () => {
-      const indexUser = this.members.find((index) => index.name === nameUser.value);
+      const memberElement = this.members.find((index) => index.name === nameUser.value);
+      localStorage.setItem('member', JSON.stringify(memberElement));
+      const calendar = new Calendar(document.body, memberElement.isAdmin, memberElement.name);
       this.destroy();
-      localStorage.setItem('user', JSON.stringify(indexUser));
-      const calendar = new Calendar(document.body, indexUser.isAdmin, indexUser.name);
       calendar.render();
     });
 

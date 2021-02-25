@@ -1,5 +1,22 @@
-import { Users, Admins } from '../constants/members';
+import { USERS, ADMINS } from '../constants/members';
 
-export const MembersUsers = [...Users];
-export const MembersAdmins = [...Admins];
-export const Members = [...Admins, ...Users];
+class MembersService {
+  constructor() {
+    this.admins = ADMINS;
+    this.users = USERS;
+  }
+
+  getAllMembers() {
+    return [...this.admins, ...this.users];
+  }
+
+  getUsers() {
+    return [...this.users];
+  }
+
+  getAdmins() {
+    return [...this.admins];
+  }
+}
+
+export const membersService = new MembersService();

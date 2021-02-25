@@ -2,7 +2,7 @@ import { Calendar } from '../calendar/calendar';
 import { DAYS } from '../core/constants/days';
 import { TIMES } from '../core/constants/times';
 import { Notification } from '../notification/notification';
-import { Members } from '../core/service/members.service';
+import { membersService } from '../core/service/members.service';
 import './add-event.scss';
 
 export class AddEvent {
@@ -10,7 +10,7 @@ export class AddEvent {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
-    this.members = Members;
+    this.members = membersService.getAllMembers();
     this.days = DAYS;
     this.times = TIMES;
     this.name = name;

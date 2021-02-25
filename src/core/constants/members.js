@@ -1,12 +1,12 @@
 import { User } from '../modals/user';
 import { Admin } from '../modals/admin';
 
-export const Users = [
+export const USERS = [
   new User('Maria'),
   new User('Alex'),
   new User('Regina'),
 ];
 
-export const Admins = [
+export const ADMINS = [
   new Admin('David'),
 ];
