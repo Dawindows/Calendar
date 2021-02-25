@@ -1,8 +1,8 @@
 import { AddEvent } from '../add-event/add-event';
 import { Event } from '../event/event';
-import { DAYS } from '../constants/days';
-import { TIMES } from '../constants/times';
-import { Members } from '../members/members.service';
+import { DAYS } from '../core/constants/days';
+import { TIMES } from '../core/constants/times';
+import { Members } from '../core/service/members.service';
 import { Authorization } from '../authorization/authorization';
 import './calendar.scss';
 
@@ -67,7 +67,7 @@ export class Calendar {
         </table>
         <div class=calendar-footer>
           <div>${this.name}</div>
-          <a id="entrance">sign out</a>
+          <a id="sign-out">sign out</a>
         </div>
       </div>
 
@@ -137,9 +137,10 @@ export class Calendar {
     });
   }
 
-  renderAuthorizationModal() {
-    const entrance = document.querySelector('#entrance');
-    entrance.addEventListener('click', () => {
+  initSignOutHandler() {
+    const signOut = document.querySelector('#sign-out');
+    signOut.addEventListener('click', () => {
+      localStorage.removeItem('user');
       const authorization = new Authorization(document.body);
       authorization.render();
       this.destroy();
@@ -158,7 +159,7 @@ export class Calendar {
     this.renderEvents();
     this.calendarFilter();
     this.checkAdmin();
-    this.renderAuthorizationModal();
+    this.initSignOutHandler();
   }
 
   destroy() {

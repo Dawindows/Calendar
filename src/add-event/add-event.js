@@ -1,8 +1,8 @@
 import { Calendar } from '../calendar/calendar';
-import { DAYS } from '../constants/days';
-import { TIMES } from '../constants/times';
+import { DAYS } from '../core/constants/days';
+import { TIMES } from '../core/constants/times';
 import { Notification } from '../notification/notification';
-import { Members } from '../members/members.service';
+import { Members } from '../core/service/members.service';
 import './add-event.scss';
 
 export class AddEvent {

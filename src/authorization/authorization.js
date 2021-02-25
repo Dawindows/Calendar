@@ -1,5 +1,5 @@
 import { Calendar } from '../calendar/calendar';
-import { Members } from '../members/members.service';
+import { Members } from '../core/service/members.service';
 
 export class Authorization {
   constructor(parent) {
@@ -21,7 +21,7 @@ export class Authorization {
             <div class="modal-card">
                 <header class="modal-card-head">
                     <p class="modal-card-title">
-                       Please authorise
+                       Please authorize
                     </p>
                 </header>
                 <section class="modal-card-body">
@@ -32,7 +32,7 @@ export class Authorization {
                     </div>
                 </section>
                 <footer class="modal-card-foot is-pulled-right">
-                    <button id="authorization-button-ok" class="button is-success">OK</button>
+                    <button id="authorization-button-ok" class="button is-success">Confirm</button>
                 </footer>
             </div>
         </div>
@@ -51,6 +51,7 @@ export class Authorization {
     const listenerOk = this.buttonOk.addEventListener('click', () => {
       const indexUser = this.members.find((index) => index.name === nameUser.value);
       this.destroy();
+      localStorage.setItem('user', JSON.stringify(indexUser));
       const calendar = new Calendar(document.body, indexUser.isAdmin, indexUser.name);
       calendar.render();
     });

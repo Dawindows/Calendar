@@ -1,7 +1,7 @@
 #authorization {
   text-align: center; }
   #authorization .modal-card-foot {
-    justify-content: center; }
+    justify-content: flex-end; }
   #authorization .modal-card {
     width: 302px; }
 

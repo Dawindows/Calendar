@@ -131,8 +131,8 @@ export class Event {
   }
 
   updateEvent(eventNewId, eventPriviousId) {
-    this.calendarEventsStorge = JSON.parse(localStorage.getItem('events'));
-    const eventFromlocalStorage = this.calendarEventsStorge.find(
+    this.calendarEventsStorage = JSON.parse(localStorage.getItem('events'));
+    const eventFromlocalStorage = this.calendarEventsStorage.find(
       (item) => item.id === eventPriviousId,
     );
 
@@ -141,7 +141,7 @@ export class Event {
       eventFromlocalStorage.time,
     ] = eventNewId.split('-');
 
-    localStorage.setItem('events', JSON.stringify(this.calendarEventsStorge));
+    localStorage.setItem('events', JSON.stringify(this.calendarEventsStorage));
     this.eventCallback();
   }
 
