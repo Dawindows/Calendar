@@ -1,15 +1,21 @@
 import { AddEvent } from '../add-event/add-event';
 import { Event } from '../event/event';
-import { DAYS } from '../constants/days';
-import { TIMES } from '../constants/times';
+import { DAYS } from '../core/constants/days';
+import { TIMES } from '../core/constants/times';
+import { Members } from '../core/service/members.service';
+import { Authorization } from '../authorization/authorization';
+import './calendar.scss';
 
 export class Calendar {
-  constructor(parent) {
+  constructor(parent, isAdmin, name) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
     this.days = DAYS;
+    this.members = Members;
     this.times = TIMES;
+    this.isAdmin = isAdmin;
+    this.name = name;
   }
 
   get template() {
@@ -26,6 +32,12 @@ export class Calendar {
       `;
     }).join('');
 
+    const members = this.members.map((member) => (
+      `
+        <option class="member" value="${member.name}">${member.name}</option>
+      `
+    )).join('');
+
     return `
       <div id="calendar" class="card-content">
         <div id="calendar-header">
@@ -34,10 +46,8 @@ export class Calendar {
               <div>
                 <div id="event" class="select">
                     <select id="user">
-                        <option selected>All members</option>
-                        <option>Maria</option>
-                        <option>Bob</option>
-                        <option>Alex</option>
+                        <option selected>All events</option>
+                        ${members}
                     </select>
                 </div>
                 <button id="add-event" class="button is-primary">New event +</button>
@@ -55,8 +65,13 @@ export class Calendar {
             </tr>
             ${table}
         </table>
+        <div class=calendar-footer>
+          <div>${this.name}</div>
+          <a id="sign-out">sign out</a>
+        </div>
       </div>
-          `;
+
+    `;
   }
 
   init() {
@@ -69,12 +84,18 @@ export class Calendar {
   initAddEvent() {
     this.addEvent = document.querySelector('#add-event');
     const listenerAddEvent = this.addEvent.addEventListener('click', () => {
-      const addEvent = new AddEvent(document.body);
+      const addEvent = new AddEvent(document.body, this.name);
       addEvent.render();
       this.destroy();
     });
 
     this.eventListeners.push(['click', listenerAddEvent, this.addEvent]);
+  }
+
+  checkAdmin() {
+    if (!this.isAdmin) {
+      document.querySelector('#add-event').classList.add('hide');
+    }
   }
 
   calendarFilter() {
@@ -85,7 +106,7 @@ export class Calendar {
         item.classList.remove('show', 'hide');
         item.classList.add('hide');
 
-        if (filterMenu.value === 'All members') {
+        if (filterMenu.value === 'All events') {
           item.classList.remove('show', 'hide');
           item.classList.add('show');
         }
@@ -102,14 +123,27 @@ export class Calendar {
     this.calendarEvents.forEach((item) => {
       const id = `${item.weekday}-${item.time}`;
       this.container = document.querySelector(`#${id.toLowerCase()}`);
+
       const allCalendarEvents = new Event(
         this.container,
         item.members,
         item.id,
         item.eventName,
         this.render.bind(this),
+        this.isAdmin,
       );
+
       allCalendarEvents.render();
+    });
+  }
+
+  initSignOutHandler() {
+    const signOut = document.querySelector('#sign-out');
+    signOut.addEventListener('click', () => {
+      localStorage.removeItem('user');
+      const authorization = new Authorization(document.body);
+      authorization.render();
+      this.destroy();
     });
   }
 
@@ -124,6 +158,8 @@ export class Calendar {
     this.initAddEvent();
     this.renderEvents();
     this.calendarFilter();
+    this.checkAdmin();
+    this.initSignOutHandler();
   }
 
   destroy() {

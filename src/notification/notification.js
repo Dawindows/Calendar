@@ -1,3 +1,5 @@
+import './notification.scss';
+
 export class Notification {
   constructor(parent, text, success, duration) {
     this.el = null;

@@ -1,10 +1,13 @@
-import './add-event/add-event.scss';
-import './calendar/calendar.scss';
-import './modal/modal.scss';
-import './notification/notification.scss';
-import './event/event.scss';
+import './authorization/authorization.scss';
+import { Authorization } from './authorization/authorization';
 import { Calendar } from './calendar/calendar';
 
-const calendar = new Calendar(document.body);
+const membersElements = JSON.parse(localStorage.getItem('user')) || [];
 
-calendar.render();
+if (membersElements.name) {
+  const calendar = new Calendar(document.body, membersElements._isAdmin, membersElements.name);
+  calendar.render();
+} else {
+  const authorization = new Authorization(document.body);
+  authorization.render();
+}

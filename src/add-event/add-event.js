@@ -1,22 +1,25 @@
 import { Calendar } from '../calendar/calendar';
-import { DAYS } from '../constants/days';
-import { TIMES } from '../constants/times';
+import { DAYS } from '../core/constants/days';
+import { TIMES } from '../core/constants/times';
 import { Notification } from '../notification/notification';
+import { Members } from '../core/service/members.service';
+import './add-event.scss';
 
 export class AddEvent {
-  constructor(parent) {
+  constructor(parent, name) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
-    this.members = ['Maria', 'Bob', 'Alex'];
+    this.members = Members;
     this.days = DAYS;
     this.times = TIMES;
+    this.name = name;
   }
 
   get template() {
     const membersElements = this.members.map((member) => (
       `
-        <option class="member" value="${member}">${member}</option>
+        <option class="member" value="${member.name}">${member.name}</option>
       `
     )).join('');
 
@@ -97,14 +100,14 @@ export class AddEvent {
     this.cancel = this.el.querySelector('#cancel');
     this.createEvent = this.el.querySelector('#create-event');
     this.eventName = document.querySelector('#event-name');
-    this.members = document.querySelector('#members');
+    this.membersSelected = document.querySelector('#members');
     this.memberOptions = document.querySelectorAll('.member');
     this.weekday = document.querySelector('#weekday');
     this.time = document.querySelector('#time');
 
     const listenerCancel = this.cancel.addEventListener('click', () => {
       this.destroy();
-      const calendar = new Calendar(document.body);
+      const calendar = new Calendar(document.body, true, this.name);
       calendar.render();
     });
 
@@ -134,7 +137,7 @@ export class AddEvent {
     } else {
       this.addEvent();
       this.destroy();
-      const calendar = new Calendar(document.body);
+      const calendar = new Calendar(document.body, true, this.name);
       calendar.render();
       this.renderNotification('Event created', true);
     }
@@ -157,15 +160,16 @@ export class AddEvent {
     const members = Array.prototype.filter
       .apply(this.memberOptions, [(item) => item.selected])
       .map((item) => item.value);
+
     const event = {
       eventName: this.eventName.value,
       members:
-        this.members.value === 'All members'
-          ? ['Maria', 'Bob', 'Alex']
+        this.membersSelected.value === 'All members'
+          ? this.members.map((item) => item.name)
           : members,
       weekday: this.weekday.value.toLowerCase(),
       time: this.time.value.replace(/(:00)/, ''),
-      id: `${this.weekday.value.toLowerCase()} '-'  ${this.time.value.replace(/(:00)/, '')}`,
+      id: `${this.weekday.value.toLowerCase()}-${this.time.value.replace(/(:00)/, '')}`,
     };
 
     this.calendarEvents.push(event);
