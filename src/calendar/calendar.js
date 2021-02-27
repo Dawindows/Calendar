@@ -74,11 +74,10 @@ export class Calendar {
     `;
   }
 
-  init() {
+  async init() {
     this.el = document.createElement('div');
     this.el.classList.add('card');
     this.el.classList.add('calendar');
-    this.calendarEvents = JSON.parse(localStorage.getItem('events')) || [];
   }
 
   initAddEvent() {
@@ -119,8 +118,10 @@ export class Calendar {
     });
   }
 
-  renderEvents() {
-    this.calendarEvents.forEach((item) => {
+  async renderEvents() {
+    const response = await fetch('http://localhost:3000/events');
+    const content = await response.json();
+    content.forEach((item) => {
       const id = `${item.weekday}-${item.time}`;
       this.container = document.querySelector(`#${id.toLowerCase()}`);
 
@@ -128,6 +129,7 @@ export class Calendar {
         this.container,
         item.members,
         item.id,
+        item.dataId,
         item.eventName,
         this.render.bind(this),
         this.isAdmin,

@@ -1,13 +1,15 @@
+import { Calendar } from '../calendar/calendar';
 import { Modal } from '../modal/modal';
 import './event.scss';
 
 export class Event {
-  constructor(parent, members, id, eventName, eventCallback, isAdmin) {
+  constructor(parent, members, id, dataId, eventName, eventCallback, isAdmin) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
     this.members = members;
     this.id = id;
+    this.dataId = dataId;
     this.eventCallback = eventCallback;
     this.eventName = eventName;
     this.isAdmin = isAdmin;
@@ -15,10 +17,10 @@ export class Event {
 
   get template() {
     return `
-        <div class="message is-info ${this.members.join(' ')}" data-item="${this.id}" draggable="true">
+        <div class="message is-info ${this.members.join(' ')}" data-item="${this.dataId}" draggable="true">
         <span class="message-header">
             ${this.eventName}
-            <button class="delete-event delete is-small" event-id="${this.id}"></button>
+            <button class="delete-event delete is-small" event-id="${this.dataId}"></button>
         </span>
         </div>
     `;
@@ -26,7 +28,6 @@ export class Event {
 
   init() {
     this.el = document.createElement('div');
-    this.calendarEvents = JSON.parse(localStorage.getItem('events')) || [];
   }
 
   initEventListeners() {
@@ -67,14 +68,13 @@ export class Event {
     myModal.render();
   }
 
-  deleteCallback() {
-    this.calendarEventsToDelete = JSON.parse(localStorage.getItem('events')) || [];
-    const index = this.calendarEventsToDelete.findIndex(
-      (item) => this.id === item.id.toString(),
-    );
-
-    this.calendarEventsToDelete.splice(index, 1);
-    localStorage.setItem('events', JSON.stringify(this.calendarEventsToDelete));
+  async deleteCallback() {
+    await fetch(`http://localhost:3000/events/${this.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    }).then((response) => response.json());
     this.destroy();
   }
 
@@ -130,19 +130,32 @@ export class Event {
     });
   }
 
-  updateEvent(eventNewId, eventPriviousId) {
-    this.calendarEventsStorage = JSON.parse(localStorage.getItem('events'));
-    const eventFromlocalStorage = this.calendarEventsStorage.find(
-      (item) => item.id === eventPriviousId,
+  async updateEvent(eventNewId, eventPriviousId) {
+    const response = await fetch('http://localhost:3000/events');
+    const content = await response.json();
+
+    const eventFromServer = content.find(
+      (item) => item.dataId === eventPriviousId,
     );
+    
+    [eventFromServer.weekday, eventFromServer.time] = eventNewId.split('-');
+    
+    await fetch(`http://localhost:3000/events/${eventFromServer.id}`, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        eventName: eventFromServer.eventName,
+        members: eventFromServer.members,
+        weekday: eventFromServer.weekday,
+        time: eventFromServer.time,
+        dataId: eventNewId,
+      }),
+    });
 
-    [
-      eventFromlocalStorage.weekday,
-      eventFromlocalStorage.time,
-    ] = eventNewId.split('-');
-
-    localStorage.setItem('events', JSON.stringify(this.calendarEventsStorage));
-    this.eventCallback();
+    this.eventCallback()
   }
 
   render() {

@@ -93,7 +93,6 @@ export class AddEvent {
     this.el = document.createElement('div');
     this.el.classList.add('card');
     this.el.classList.add('add-event');
-    this.calendarEvents = JSON.parse(localStorage.getItem('events')) || [];
   }
 
   afterInit() {
@@ -119,8 +118,10 @@ export class AddEvent {
     this.eventListeners.push(['click', listenerCancel, this.cancel]);
   }
 
-  checkDate() {
-    const dateInfo = this.calendarEvents.find((item) => (
+  async checkDate() {
+    const response = await fetch('http://localhost:3000/events');
+    const content = await response.json();
+    const dateInfo = content.find((item) => (
       item.weekday === this.weekday.value && item.time === this.time.value
     ));
 
@@ -137,8 +138,10 @@ export class AddEvent {
     } else {
       this.addEvent();
       this.destroy();
-      const calendar = new Calendar(document.body, true, this.name);
-      calendar.render();
+      setTimeout(() => {
+        const calendar = new Calendar(document.body, true, this.name);
+        calendar.render();
+      }, 100);
       this.renderNotification('Event created', true);
     }
   }
@@ -156,24 +159,28 @@ export class AddEvent {
     this.notification.render();
   }
 
-  addEvent() {
+  async addEvent() {
     const members = Array.prototype.filter
       .apply(this.memberOptions, [(item) => item.selected])
       .map((item) => item.value);
 
-    const event = {
-      eventName: this.eventName.value,
-      members:
-        this.membersSelected.value === 'All members'
-          ? this.members.map((item) => item.name)
-          : members,
-      weekday: this.weekday.value.toLowerCase(),
-      time: this.time.value.replace(/(:00)/, ''),
-      id: `${this.weekday.value.toLowerCase()}-${this.time.value.replace(/(:00)/, '')}`,
-    };
-
-    this.calendarEvents.push(event);
-    localStorage.setItem('events', JSON.stringify(this.calendarEvents));
+    await fetch('http://localhost:3000/events', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        eventName: this.eventName.value,
+        members:
+          this.membersSelected.value === 'All members'
+            ? this.members.map((item) => item.name)
+            : members,
+        weekday: this.weekday.value.toLowerCase(),
+        time: this.time.value.replace(/(:00)/, ''),
+        dataId: `${this.weekday.value.toLowerCase()}-${this.time.value.replace(/(:00)/, '')}`,
+      }),
+    });
   }
 
   render() {
