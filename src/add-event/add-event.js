@@ -3,6 +3,7 @@ import { DAYS } from '../core/constants/days';
 import { TIMES } from '../core/constants/times';
 import { Notification } from '../notification/notification';
 import { membersService } from '../core/service/members.service';
+import { getDataFromServer, createDataOnServer } from '../core/server/api-tools';
 import './add-event.scss';
 
 export class AddEvent {
@@ -119,18 +120,18 @@ export class AddEvent {
   }
 
   async checkDate() {
-    const response = await fetch('http://localhost:3000/events');
-    const content = await response.json();
-    const dateInfo = content.find((item) => (
-      item.weekday === this.weekday.value && item.time === this.time.value
-    ));
+    await getDataFromServer('events').then((data) => {
+      this.dateInfo = data.find((item) => (
+        item.weekday === this.weekday.value && item.time === this.time.value
+      ));
+    });
 
     if (this.eventName.value.length <= 3) {
       this.renderNotification(
         'Filed to create an event. Event name is too short',
         false,
       );
-    } else if (dateInfo) {
+    } else if (this.dateInfo) {
       this.renderNotification(
         'Filed to create an event. Time slot is already booked',
         false,
@@ -159,28 +160,23 @@ export class AddEvent {
     this.notification.render();
   }
 
-  async addEvent() {
+  addEvent() {
     const members = Array.prototype.filter
       .apply(this.memberOptions, [(item) => item.selected])
       .map((item) => item.value);
 
-    await fetch('http://localhost:3000/events', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        eventName: this.eventName.value,
-        members:
-          this.membersSelected.value === 'All members'
-            ? this.members.map((item) => item.name)
-            : members,
-        weekday: this.weekday.value.toLowerCase(),
-        time: this.time.value.replace(/(:00)/, ''),
-        dataId: `${this.weekday.value.toLowerCase()}-${this.time.value.replace(/(:00)/, '')}`,
-      }),
-    });
+    const newEvent = {
+      eventName: this.eventName.value,
+      members:
+        this.membersSelected.value === 'All members'
+          ? this.members.map((item) => item.name)
+          : members,
+      weekday: this.weekday.value.toLowerCase(),
+      time: this.time.value.replace(/(:00)/, ''),
+      dataId: `${this.weekday.value.toLowerCase()}-${this.time.value.replace(/(:00)/, '')}`,
+    };
+
+    createDataOnServer('events', newEvent);
   }
 
   render() {

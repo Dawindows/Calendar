@@ -1,5 +1,6 @@
 import { Calendar } from '../calendar/calendar';
 import { Modal } from '../modal/modal';
+import { ChangeDataOnServer, deleteDataOnServer, getDataFromServer } from '../core/server/api-tools';
 import './event.scss';
 
 export class Event {
@@ -44,6 +45,7 @@ export class Event {
 
   checkAdmin() {
     const buttonDeleteEvent = document.querySelectorAll('.delete-event');
+
     if (!this.isAdmin) {
       buttonDeleteEvent.forEach((item) => {
         item.classList.add('hide');
@@ -68,13 +70,8 @@ export class Event {
     myModal.render();
   }
 
-  async deleteCallback() {
-    await fetch(`http://localhost:3000/events/${this.id}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    }).then((response) => response.json());
+  deleteCallback() {
+    deleteDataOnServer('events', this.id);
     this.destroy();
   }
 
@@ -130,32 +127,27 @@ export class Event {
     });
   }
 
-  async updateEvent(eventNewId, eventPriviousId) {
-    const response = await fetch('http://localhost:3000/events');
-    const content = await response.json();
+  updateEvent(eventNewId, eventPriviousId) {
+    getDataFromServer('events').then((data) => {
+      const eventFromServer = data.find(
+        (item) => item.dataId === eventPriviousId,
+      );
 
-    const eventFromServer = content.find(
-      (item) => item.dataId === eventPriviousId,
-    );
-    
-    [eventFromServer.weekday, eventFromServer.time] = eventNewId.split('-');
-    
-    await fetch(`http://localhost:3000/events/${eventFromServer.id}`, {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+      [eventFromServer.weekday, eventFromServer.time] = eventNewId.split('-');
+
+      const changeEvent = {
         eventName: eventFromServer.eventName,
         members: eventFromServer.members,
         weekday: eventFromServer.weekday,
         time: eventFromServer.time,
         dataId: eventNewId,
-      }),
-    });
+      };
 
-    this.eventCallback()
+      ChangeDataOnServer('events', changeEvent, eventFromServer.id);
+
+      window.location.reload()
+      // this.eventCallback();
+    });
   }
 
   render() {

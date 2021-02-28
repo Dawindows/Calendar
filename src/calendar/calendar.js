@@ -4,6 +4,7 @@ import { DAYS } from '../core/constants/days';
 import { TIMES } from '../core/constants/times';
 import { membersService } from '../core/service/members.service';
 import { Authorization } from '../authorization/authorization';
+import { getDataFromServer } from '../core/server/api-tools';
 import './calendar.scss';
 
 export class Calendar {
@@ -118,24 +119,24 @@ export class Calendar {
     });
   }
 
-  async renderEvents() {
-    const response = await fetch('http://localhost:3000/events');
-    const content = await response.json();
-    content.forEach((item) => {
-      const id = `${item.weekday}-${item.time}`;
-      this.container = document.querySelector(`#${id.toLowerCase()}`);
+  renderEvents() {
+    getDataFromServer('events').then((data) => {
+      data.forEach((item) => {
+        const id = `${item.weekday}-${item.time}`;
+        this.container = document.querySelector(`#${id.toLowerCase()}`);
 
-      const allCalendarEvents = new Event(
-        this.container,
-        item.members,
-        item.id,
-        item.dataId,
-        item.eventName,
-        this.render.bind(this),
-        this.isAdmin,
-      );
+        const allCalendarEvents = new Event(
+          this.container,
+          item.members,
+          item.id,
+          item.dataId,
+          item.eventName,
+          this.render.bind(this),
+          this.isAdmin,
+        );
 
-      allCalendarEvents.render();
+        allCalendarEvents.render();
+      });
     });
   }
 

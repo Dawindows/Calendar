@@ -15,20 +15,7 @@
   ],
   "events": [
     {
-      "eventName": "sdsdsd",
-      "members": [
-        "David",
-        "Maria",
-        "Alex",
-        "Regina"
-      ],
-      "weekday": "monday",
-      "time": "16",
-      "dataId": "monday-16",
-      "id": 1
-    },
-    {
-      "eventName": "sdsdd",
+      "eventName": "sdsds",
       "members": [
         "David",
         "Maria",
@@ -36,44 +23,8 @@
         "Regina"
       ],
       "weekday": "wednesday",
-      "time": "18",
-      "dataId": "wednesday-18",
-      "id": 2
-    },
-    {
-      "eventName": "dfffd",
-      "members": [
-        "David",
-        "Maria",
-        "Alex",
-        "Regina"
-      ],
-      "weekday": "tuesday",
-      "time": "11",
-      "dataId": "tuesday-11",
-      "id": 3
-    },
-    {
-      "eventName": "dssdsd",
-      "members": [
-        "David",
-        "Maria",
-        "Alex",
-        "Regina"
-      ],
-      "weekday": "wednesday",
-      "time": "13",
-      "dataId": "wednesday-13",
-      "id": 4
-    },
-    {
-      "eventName": "dsdsds",
-      "members": [
-        "David"
-      ],
-      "weekday": "monday",
-      "time": "10",
-      "dataId": "monday-10",
+      "time": "14",
+      "dataId": "wednesday-14",
       "id": 5
     }
   ]
