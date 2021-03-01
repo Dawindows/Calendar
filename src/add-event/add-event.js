@@ -4,7 +4,7 @@ import { TIMES } from '../core/constants/times';
 import { Notification } from '../notification/notification';
 import { membersService } from '../core/service/members.service';
 import { createDataOnServer } from '../core/server/api';
-import { getData } from '../core/server/api-getData';
+import { getData } from '../core/server/api-get-data';
 import './add-event.scss';
 
 export class AddEvent {
@@ -122,7 +122,7 @@ export class AddEvent {
 
   async checkDate() {
     await getData('events').then((data) => {
-      if(data) {
+      if (data) {
         this.dateInfo = data.find((item) => (
           item.weekday === this.weekday.value && item.time === this.time.value
         ));
@@ -145,7 +145,7 @@ export class AddEvent {
       setTimeout(() => {
         const calendar = new Calendar(document.body, true, this.name);
         calendar.render();
-      }, 100);
+      }, 300);
       this.renderNotification('Event created', true);
     }
   }

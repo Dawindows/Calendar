@@ -121,7 +121,7 @@ export class Calendar {
   renderEvents() {
     getDataFromServer('events')
       .then((data) => {
-        if(data) {
+        if (data) {
           data.forEach((element) => {
             const elementData = JSON.parse(element.data);
             const elementId = element.id;

@@ -1,5 +1,5 @@
 import { Modal } from '../modal/modal';
-import { getData } from '../core/server/api-getData';
+import { getData } from '../core/server/api-get-data';
 import { ChangeDataOnServer, deleteDataOnServer } from '../core/server/api';
 import './event.scss';
 
@@ -146,10 +146,10 @@ export class Event {
 
         ChangeDataOnServer('events', JSON.stringify(changeEvent), JSON.parse(eventPriviousId).id);
       });
-      setTimeout(() => {
-        window.location.reload();
-        // this.eventCallback();
-      }, 500)
+    setTimeout(() => {
+      window.location.reload();
+      // this.eventCallback();
+    }, 500);
   }
 
   render() {
