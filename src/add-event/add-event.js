@@ -3,7 +3,8 @@ import { DAYS } from '../core/constants/days';
 import { TIMES } from '../core/constants/times';
 import { Notification } from '../notification/notification';
 import { membersService } from '../core/service/members.service';
-import { getDataFromServer, createDataOnServer } from '../core/server/api-tools';
+import { createDataOnServer } from '../core/server/api';
+import { getData } from '../core/server/api-getData';
 import './add-event.scss';
 
 export class AddEvent {
@@ -120,10 +121,12 @@ export class AddEvent {
   }
 
   async checkDate() {
-    await getDataFromServer('events').then((data) => {
-      this.dateInfo = data.find((item) => (
-        item.weekday === this.weekday.value && item.time === this.time.value
-      ));
+    await getData('events').then((data) => {
+      if(data) {
+        this.dateInfo = data.find((item) => (
+          item.weekday === this.weekday.value && item.time === this.time.value
+        ));
+      }
     });
 
     if (this.eventName.value.length <= 3) {

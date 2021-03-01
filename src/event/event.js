@@ -1,6 +1,6 @@
-import { Calendar } from '../calendar/calendar';
 import { Modal } from '../modal/modal';
-import { ChangeDataOnServer, deleteDataOnServer, getDataFromServer } from '../core/server/api-tools';
+import { getData } from '../core/server/api-getData';
+import { ChangeDataOnServer, deleteDataOnServer } from '../core/server/api';
 import './event.scss';
 
 export class Event {
@@ -18,7 +18,7 @@ export class Event {
 
   get template() {
     return `
-        <div class="message is-info ${this.members.join(' ')}" data-item="${this.dataId}" draggable="true">
+        <div class="message is-info ${this.members.join(' ')}" data-item="${this.dataId}" data-id="${this.id}" draggable="true">
         <span class="message-header">
             ${this.eventName}
             <button class="delete-event delete is-small" event-id="${this.dataId}"></button>
@@ -81,7 +81,7 @@ export class Event {
     const self = this;
 
     function handlerDragstart(event) {
-      event.dataTransfer.setData('dragItem', this.dataset.item);
+      event.dataTransfer.setData('dragItem', JSON.stringify({ item: this.dataset.item, id: this.dataset.id }));
       this.classList.add('drag-item-start');
     }
 
@@ -128,26 +128,28 @@ export class Event {
   }
 
   updateEvent(eventNewId, eventPriviousId) {
-    getDataFromServer('events').then((data) => {
-      const eventFromServer = data.find(
-        (item) => item.dataId === eventPriviousId,
-      );
+    getData('events')
+      .then((data) => {
+        const eventFromServer = data.find(
+          (item) => item.dataId === JSON.parse(eventPriviousId).item,
+        );
 
-      [eventFromServer.weekday, eventFromServer.time] = eventNewId.split('-');
+        [eventFromServer.weekday, eventFromServer.time] = eventNewId.split('-');
 
-      const changeEvent = {
-        eventName: eventFromServer.eventName,
-        members: eventFromServer.members,
-        weekday: eventFromServer.weekday,
-        time: eventFromServer.time,
-        dataId: eventNewId,
-      };
+        const changeEvent = {
+          eventName: eventFromServer.eventName,
+          members: eventFromServer.members,
+          weekday: eventFromServer.weekday,
+          time: eventFromServer.time,
+          dataId: eventNewId,
+        };
 
-      ChangeDataOnServer('events', changeEvent, eventFromServer.id);
-
-      window.location.reload()
-      // this.eventCallback();
-    });
+        ChangeDataOnServer('events', JSON.stringify(changeEvent), JSON.parse(eventPriviousId).id);
+      });
+      setTimeout(() => {
+        window.location.reload();
+        // this.eventCallback();
+      }, 500)
   }
 
   render() {
