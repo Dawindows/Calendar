@@ -3,6 +3,8 @@ import { DAYS } from '../core/constants/days';
 import { TIMES } from '../core/constants/times';
 import { Notification } from '../notification/notification';
 import { membersService } from '../core/service/members.service';
+import { createDataOnServer } from '../core/server/api';
+import { getData } from '../core/server/api-get-data';
 import './add-event.scss';
 
 export class AddEvent {
@@ -93,7 +95,6 @@ export class AddEvent {
     this.el = document.createElement('div');
     this.el.classList.add('card');
     this.el.classList.add('add-event');
-    this.calendarEvents = JSON.parse(localStorage.getItem('events')) || [];
   }
 
   afterInit() {
@@ -119,17 +120,21 @@ export class AddEvent {
     this.eventListeners.push(['click', listenerCancel, this.cancel]);
   }
 
-  checkDate() {
-    const dateInfo = this.calendarEvents.find((item) => (
-      item.weekday === this.weekday.value && item.time === this.time.value
-    ));
+  async checkDate() {
+    await getData('events').then((data) => {
+      if (data) {
+        this.dateInfo = data.find((item) => (
+          item.weekday === this.weekday.value && item.time === this.time.value
+        ));
+      }
+    });
 
     if (this.eventName.value.length <= 3) {
       this.renderNotification(
         'Filed to create an event. Event name is too short',
         false,
       );
-    } else if (dateInfo) {
+    } else if (this.dateInfo) {
       this.renderNotification(
         'Filed to create an event. Time slot is already booked',
         false,
@@ -137,8 +142,10 @@ export class AddEvent {
     } else {
       this.addEvent();
       this.destroy();
-      const calendar = new Calendar(document.body, true, this.name);
-      calendar.render();
+      setTimeout(() => {
+        const calendar = new Calendar(document.body, true, this.name);
+        calendar.render();
+      }, 300);
       this.renderNotification('Event created', true);
     }
   }
@@ -161,7 +168,7 @@ export class AddEvent {
       .apply(this.memberOptions, [(item) => item.selected])
       .map((item) => item.value);
 
-    const event = {
+    const newEvent = {
       eventName: this.eventName.value,
       members:
         this.membersSelected.value === 'All members'
@@ -169,11 +176,10 @@ export class AddEvent {
           : members,
       weekday: this.weekday.value.toLowerCase(),
       time: this.time.value.replace(/(:00)/, ''),
-      id: `${this.weekday.value.toLowerCase()}-${this.time.value.replace(/(:00)/, '')}`,
+      dataId: `${this.weekday.value.toLowerCase()}-${this.time.value.replace(/(:00)/, '')}`,
     };
 
-    this.calendarEvents.push(event);
-    localStorage.setItem('events', JSON.stringify(this.calendarEvents));
+    createDataOnServer('events', newEvent);
   }
 
   render() {

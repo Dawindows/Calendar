@@ -4,6 +4,7 @@ import { DAYS } from '../core/constants/days';
 import { TIMES } from '../core/constants/times';
 import { membersService } from '../core/service/members.service';
 import { Authorization } from '../authorization/authorization';
+import { getDataFromServer } from '../core/server/api';
 import './calendar.scss';
 
 export class Calendar {
@@ -70,15 +71,13 @@ export class Calendar {
           <a id="sign-out">sign out</a>
         </div>
       </div>
-
     `;
   }
 
-  init() {
+  async init() {
     this.el = document.createElement('div');
     this.el.classList.add('card');
     this.el.classList.add('calendar');
-    this.calendarEvents = JSON.parse(localStorage.getItem('events')) || [];
   }
 
   initAddEvent() {
@@ -120,21 +119,30 @@ export class Calendar {
   }
 
   renderEvents() {
-    this.calendarEvents.forEach((item) => {
-      const id = `${item.weekday}-${item.time}`;
-      this.container = document.querySelector(`#${id.toLowerCase()}`);
+    getDataFromServer('events')
+      .then((data) => {
+        if (data) {
+          data.forEach((element) => {
+            const elementData = JSON.parse(element.data);
+            const elementId = element.id;
 
-      const allCalendarEvents = new Event(
-        this.container,
-        item.members,
-        item.id,
-        item.eventName,
-        this.render.bind(this),
-        this.isAdmin,
-      );
+            const id = `${elementData.weekday}-${elementData.time}`;
+            this.container = document.querySelector(`#${id.toLowerCase()}`);
 
-      allCalendarEvents.render();
-    });
+            const allCalendarEvents = new Event(
+              this.container,
+              elementData.members,
+              elementId,
+              elementData.dataId,
+              elementData.eventName,
+              this.render.bind(this),
+              this.isAdmin,
+            );
+
+            allCalendarEvents.render();
+          });
+        }
+      });
   }
 
   initSignOutHandler() {

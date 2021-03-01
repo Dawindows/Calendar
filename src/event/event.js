@@ -1,13 +1,16 @@
 import { Modal } from '../modal/modal';
+import { getData } from '../core/server/api-get-data';
+import { ChangeDataOnServer, deleteDataOnServer } from '../core/server/api';
 import './event.scss';
 
 export class Event {
-  constructor(parent, members, id, eventName, eventCallback, isAdmin) {
+  constructor(parent, members, id, dataId, eventName, eventCallback, isAdmin) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
     this.members = members;
     this.id = id;
+    this.dataId = dataId;
     this.eventCallback = eventCallback;
     this.eventName = eventName;
     this.isAdmin = isAdmin;
@@ -15,10 +18,10 @@ export class Event {
 
   get template() {
     return `
-        <div class="message is-info ${this.members.join(' ')}" data-item="${this.id}" draggable="true">
+        <div class="message is-info ${this.members.join(' ')}" data-item="${this.dataId}" data-id="${this.id}" draggable="true">
         <span class="message-header">
             ${this.eventName}
-            <button class="delete-event delete is-small" event-id="${this.id}"></button>
+            <button class="delete-event delete is-small" event-id="${this.dataId}"></button>
         </span>
         </div>
     `;
@@ -26,7 +29,6 @@ export class Event {
 
   init() {
     this.el = document.createElement('div');
-    this.calendarEvents = JSON.parse(localStorage.getItem('events')) || [];
   }
 
   initEventListeners() {
@@ -43,6 +45,7 @@ export class Event {
 
   checkAdmin() {
     const buttonDeleteEvent = document.querySelectorAll('.delete-event');
+
     if (!this.isAdmin) {
       buttonDeleteEvent.forEach((item) => {
         item.classList.add('hide');
@@ -68,13 +71,7 @@ export class Event {
   }
 
   deleteCallback() {
-    this.calendarEventsToDelete = JSON.parse(localStorage.getItem('events')) || [];
-    const index = this.calendarEventsToDelete.findIndex(
-      (item) => this.id === item.id.toString(),
-    );
-
-    this.calendarEventsToDelete.splice(index, 1);
-    localStorage.setItem('events', JSON.stringify(this.calendarEventsToDelete));
+    deleteDataOnServer('events', this.id);
     this.destroy();
   }
 
@@ -84,7 +81,7 @@ export class Event {
     const self = this;
 
     function handlerDragstart(event) {
-      event.dataTransfer.setData('dragItem', this.dataset.item);
+      event.dataTransfer.setData('dragItem', JSON.stringify({ item: this.dataset.item, id: this.dataset.id }));
       this.classList.add('drag-item-start');
     }
 
@@ -131,18 +128,28 @@ export class Event {
   }
 
   updateEvent(eventNewId, eventPriviousId) {
-    this.calendarEventsStorage = JSON.parse(localStorage.getItem('events'));
-    const eventFromlocalStorage = this.calendarEventsStorage.find(
-      (item) => item.id === eventPriviousId,
-    );
+    getData('events')
+      .then((data) => {
+        const eventFromServer = data.find(
+          (item) => item.dataId === JSON.parse(eventPriviousId).item,
+        );
 
-    [
-      eventFromlocalStorage.weekday,
-      eventFromlocalStorage.time,
-    ] = eventNewId.split('-');
+        [eventFromServer.weekday, eventFromServer.time] = eventNewId.split('-');
 
-    localStorage.setItem('events', JSON.stringify(this.calendarEventsStorage));
-    this.eventCallback();
+        const changeEvent = {
+          eventName: eventFromServer.eventName,
+          members: eventFromServer.members,
+          weekday: eventFromServer.weekday,
+          time: eventFromServer.time,
+          dataId: eventNewId,
+        };
+
+        ChangeDataOnServer('events', JSON.stringify(changeEvent), JSON.parse(eventPriviousId).id);
+      });
+    setTimeout(() => {
+      window.location.reload();
+      // this.eventCallback();
+    }, 500);
   }
 
   render() {
