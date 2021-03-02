@@ -27,8 +27,9 @@ export class Event {
     `;
   }
 
-  init() {
+  async init() {
     this.el = document.createElement('div');
+    this.data = await getData('events').then((data) => data);
   }
 
   initEventListeners() {
@@ -128,37 +129,33 @@ export class Event {
   }
 
   updateEvent(eventNewId, eventPriviousId) {
-    getData('events')
-      .then((data) => {
-        const eventFromServer = data.find(
-          (item) => item.dataId === JSON.parse(eventPriviousId).item,
-        );
+    const eventFromServer = this.data.find(
+      (item) => item.dataId === JSON.parse(eventPriviousId).item,
+    );
 
-        [eventFromServer.weekday, eventFromServer.time] = eventNewId.split('-');
+    [eventFromServer.weekday, eventFromServer.time] = eventNewId.split('-');
 
-        const changeEvent = {
-          eventName: eventFromServer.eventName,
-          members: eventFromServer.members,
-          weekday: eventFromServer.weekday,
-          time: eventFromServer.time,
-          dataId: eventNewId,
-        };
+    const changeEvent = {
+      eventName: eventFromServer.eventName,
+      members: eventFromServer.members,
+      weekday: eventFromServer.weekday,
+      time: eventFromServer.time,
+      dataId: eventNewId,
+    };
 
-        ChangeDataOnServer('events', JSON.stringify(changeEvent), JSON.parse(eventPriviousId).id);
-      });
+    ChangeDataOnServer('events', JSON.stringify(changeEvent), JSON.parse(eventPriviousId).id);
 
     setTimeout(() => {
-      window.location.reload(); // fix!
-      // this.eventCallback();
+      this.eventCallback();
     }, 500);
   }
 
-  render() {
+  async render() {
     if (this.el) {
       this.destroy();
     }
 
-    this.init();
+    await this.init();
     this.parent.appendChild(this.el);
     this.parent.classList.remove('container');
     this.el.innerHTML = this.template;

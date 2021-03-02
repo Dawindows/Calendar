@@ -1,11 +1,11 @@
 import { Calendar } from '../calendar/calendar';
+import { membersService } from '../core/service/members.service';
 
 export class Authorization {
   constructor(parent) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
-    this.members = JSON.parse(localStorage.getItem('members')) || [];
   }
 
   get template() {
@@ -39,8 +39,9 @@ export class Authorization {
     `;
   }
 
-  init() {
+  async init() {
     this.el = document.createElement('div');
+    this.members = await membersService.getAllMembers().then((data) => data);
   }
 
   afterInit() {
@@ -58,12 +59,12 @@ export class Authorization {
     this.eventListeners.push(['click', listenerOk, this.buttonOk]);
   }
 
-  render() {
+  async render() {
     if (this.el) {
       this.destroy();
     }
 
-    this.init();
+    await this.init();
     this.el.innerHTML = this.template;
     this.parent.appendChild(this.el);
     this.afterInit();
