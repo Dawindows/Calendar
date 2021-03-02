@@ -2,7 +2,6 @@ import { AddEvent } from '../add-event/add-event';
 import { Event } from '../event/event';
 import { DAYS } from '../core/constants/days';
 import { TIMES } from '../core/constants/times';
-import { membersService } from '../core/service/members.service';
 import { Authorization } from '../authorization/authorization';
 import { getDataFromServer } from '../core/server/api';
 import './calendar.scss';
@@ -13,7 +12,7 @@ export class Calendar {
     this.parent = parent;
     this.eventListeners = [];
     this.days = DAYS;
-    this.members = membersService.getAllMembers();
+    this.members = JSON.parse(localStorage.getItem('members')) || [];
     this.times = TIMES;
     this.isAdmin = isAdmin;
     this.name = name;

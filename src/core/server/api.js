@@ -1,3 +1,5 @@
+import { Notification } from '../../notification/notification';
+
 const url = 'http://158.101.166.74:8080/api/data/david_sokur';
 
 export const getDataFromServer = async (entityName) => {
@@ -6,7 +8,13 @@ export const getDataFromServer = async (entityName) => {
     const content = await response.json();
     return content;
   } catch (err) {
-    console.log(err);
+    const notification = new Notification(
+      document.querySelector('#header'),
+      err,
+      false,
+      10000,
+    );
+    notification.render();
   }
 };
 

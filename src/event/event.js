@@ -146,8 +146,9 @@ export class Event {
 
         ChangeDataOnServer('events', JSON.stringify(changeEvent), JSON.parse(eventPriviousId).id);
       });
+
     setTimeout(() => {
-      window.location.reload();
+      window.location.reload(); // fix!
       // this.eventCallback();
     }, 500);
   }
