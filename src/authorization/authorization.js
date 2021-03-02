@@ -1,16 +1,15 @@
 import { Calendar } from '../calendar/calendar';
-import { membersService } from '../core/service/members.service';
 
 export class Authorization {
   constructor(parent) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
-    this.members = membersService.getAllMembers();
+    this.members = JSON.parse(localStorage.getItem('members')) || [];
   }
 
   get template() {
-    const membersElements = this.members.map((member) => (`
+    this.membersElements = this.members.map((member) => (`
           <option class="member" value="${member.name}">${member.name}</option>
     `
     )).join('');
@@ -27,7 +26,7 @@ export class Authorization {
                 <section class="modal-card-body">
                     <div id="event" class="select is-fullwidth">
                         <select id="user">
-                            ${membersElements}
+                            ${this.membersElements}
                         </select>
                     </div>
                 </section>
@@ -51,7 +50,7 @@ export class Authorization {
     const listenerOk = this.buttonOk.addEventListener('click', () => {
       const memberElement = this.members.find((index) => index.name === nameUser.value);
       localStorage.setItem('member', JSON.stringify(memberElement));
-      const calendar = new Calendar(document.body, memberElement.isAdmin, memberElement.name);
+      const calendar = new Calendar(document.body, memberElement._isAdmin, memberElement.name);
       this.destroy();
       calendar.render();
     });

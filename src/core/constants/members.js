@@ -1,12 +1,16 @@
 import { User } from '../modals/user';
 import { Admin } from '../modals/admin';
+import { getData } from '../server/api-get-data';
 
-export const USERS = [
-  new User('Maria'),
-  new User('Alex'),
-  new User('Regina'),
-];
+function createNewMember(name, isAdmin) {
+  return (isAdmin === 'true' ? new Admin(name) : new User(name));
+}
 
-export const ADMINS = [
-  new Admin('David'),
-];
+export const getMember = async () => {
+  const members = await getData('members');
+  const data = members.map((element) => {
+    return createNewMember(element.name, element.isAdmin);
+  });
+
+  return data;
+};
