@@ -4,6 +4,7 @@ import { TIMES } from '../core/constants/times';
 import { Notification } from '../notification/notification';
 import { createDataOnServer } from '../core/server/api';
 import { getData } from '../core/server/api-get-data';
+import { membersService } from '../core/service/members.service';
 import './add-event.scss';
 
 export class AddEvent {
@@ -11,7 +12,6 @@ export class AddEvent {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
-    this.members = JSON.parse(localStorage.getItem('members')) || [];
     this.days = DAYS;
     this.times = TIMES;
     this.name = name;
@@ -90,10 +90,12 @@ export class AddEvent {
     `;
   }
 
-  init() {
+  async init() {
     this.el = document.createElement('div');
     this.el.classList.add('card');
     this.el.classList.add('add-event');
+    this.members = await membersService.getAllMembers().then((data) => data);
+    this.data = await getData('events').then((data) => data);
   }
 
   afterInit() {
@@ -120,13 +122,11 @@ export class AddEvent {
   }
 
   async checkDate() {
-    await getData('events').then((data) => {
-      if (data) {
-        this.dateInfo = data.find((item) => (
-          item.weekday === this.weekday.value && item.time === this.time.value
-        ));
-      }
-    });
+    if (this.data) {
+      this.dateInfo = this.data.find((item) => (
+        item.weekday === this.weekday.value && item.time === this.time.value
+      ));
+    }
 
     if (this.eventName.value.length <= 3) {
       this.renderNotification(
@@ -139,12 +139,10 @@ export class AddEvent {
         false,
       );
     } else {
-      this.addEvent();
+      await this.addEvent();
       this.destroy();
-      setTimeout(() => {
-        const calendar = new Calendar(document.body, true, this.name);
-        calendar.render();
-      }, 300);
+      const calendar = new Calendar(document.body, true, this.name);
+      calendar.render();
       this.renderNotification('Event created', true);
     }
   }
@@ -181,12 +179,12 @@ export class AddEvent {
     createDataOnServer('events', newEvent);
   }
 
-  render() {
+  async render() {
     if (this.el) {
       this.destroy();
     }
 
-    this.init();
+    await this.init();
     this.el.innerHTML = this.template;
     this.parent.appendChild(this.el);
     this.afterInit();

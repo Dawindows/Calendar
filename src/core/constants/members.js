@@ -8,9 +8,6 @@ function createNewMember(name, isAdmin) {
 
 export const getMember = async () => {
   const members = await getData('members');
-  const data = members.map((element) => {
-    return createNewMember(element.name, element.isAdmin);
-  });
-
+  const data = members.map((element) => createNewMember(element.name, element.isAdmin));
   return data;
 };
