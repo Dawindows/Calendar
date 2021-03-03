@@ -79,12 +79,13 @@ export class Calendar {
     this.el.classList.add('calendar');
     this.members = await membersService.getAllMembers().then((data) => data);
     this.data = await serverService.getDataFromServer('events').then((data) => data);
+    this.getData = this.data.map((item) => JSON.parse(item.data));
   }
 
   initAddEvent() {
     this.addEvent = document.querySelector('#add-event');
     const listenerAddEvent = this.addEvent.addEventListener('click', () => {
-      const addEvent = new AddEvent(document.body, this.name);
+      const addEvent = new AddEvent(document.body, this.name, this.getData, this.members);
       addEvent.render();
       this.destroy();
     });
@@ -136,6 +137,7 @@ export class Calendar {
           elementData.eventName,
           this.render.bind(this),
           this.isAdmin,
+          this.getData,
         );
 
         allCalendarEvents.render();

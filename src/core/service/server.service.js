@@ -1,26 +1,23 @@
-import { Notification } from '../../notification/notification';
+import { errorDecorator } from '../error-decorator/error-decorator';
 
 class ServerService {
   constructor() {
     this.url = 'http://158.101.166.74:8080/api/data/david_sokur';
-  }
-
-  async getDataFromServer(entityName) {
-    try {
-      const response = await fetch(`${this.url}/${entityName}`);
-      const content = await response.json();
-      return content;
-    } catch (err) {
-      const notification = new Notification(
-        document.querySelector('#header'),
-        err,
-        false,
-        10000,
-      );
-      notification.render();
+    if (typeof ServerService.instance === 'object') {
+      return ServerService.instance;
     }
+    ServerService.instance = this;
+    return this;
   }
 
+  @errorDecorator
+  async getDataFromServer(entityName) {
+    const response = await fetch(`${this.url}/${entityName}`);
+    const content = await response.json();
+    return content;
+  }
+
+  @errorDecorator
   async deleteDataOnServer(entityName, DataId) {
     await fetch(`${this.url}/${entityName}/${DataId}`, {
       method: 'DELETE',
@@ -30,6 +27,7 @@ class ServerService {
     });
   }
 
+  @errorDecorator
   async createDataOnServer(entityName, newDataContent) {
     await fetch(`${this.url}/${entityName}`, {
       method: 'POST',
@@ -41,6 +39,7 @@ class ServerService {
     });
   }
 
+  @errorDecorator
   async ChangeDataOnServer(entityName, changeDataContent, DataId) {
     await fetch(`${this.url}/${entityName}/${DataId}`, {
       method: 'PUT',

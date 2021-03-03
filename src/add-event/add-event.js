@@ -3,18 +3,18 @@ import { DAYS } from '../core/constants/days';
 import { TIMES } from '../core/constants/times';
 import { Notification } from '../notification/notification';
 import { serverService } from '../core/service/server.service';
-import { getData } from '../core/server/api-get-data';
-import { membersService } from '../core/service/members.service';
 import './add-event.scss';
 
 export class AddEvent {
-  constructor(parent, name) {
+  constructor(parent, name, data, members) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
     this.days = DAYS;
     this.times = TIMES;
     this.name = name;
+    this.data = data;
+    this.members = members;
   }
 
   get template() {
@@ -90,12 +90,10 @@ export class AddEvent {
     `;
   }
 
-  async init() {
+  init() {
     this.el = document.createElement('div');
     this.el.classList.add('card');
     this.el.classList.add('add-event');
-    this.members = await membersService.getAllMembers().then((data) => data);
-    this.data = await getData('events').then((data) => data);
   }
 
   afterInit() {
@@ -181,12 +179,12 @@ export class AddEvent {
     serverService.createDataOnServer('events', newEvent);
   }
 
-  async render() {
+  render() {
     if (this.el) {
       this.destroy();
     }
 
-    await this.init();
+    this.init();
     this.el.innerHTML = this.template;
     this.parent.appendChild(this.el);
     this.afterInit();

@@ -37,7 +37,15 @@ module.exports = {
       {
         test:/\.(s*)css$/,
         use: [miniCss.loader,'css-loader','sass-loader']
-      }   
+      },
+      { test: /\.txt$/,
+        use: 'raw-loader' 
+      },
+      {
+        test: /\.m?js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: ['babel-loader'],
+      },
     ]
   },
 };

@@ -1,4 +1,4 @@
-import { getMember } from '../constants/members';
+import { getMember } from '../create-member/create-member';
 
 class MembersService {
   getAllMembers() {

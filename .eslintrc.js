@@ -5,6 +5,7 @@ module.exports = {
         "browser": true,
         "es2021": true
     },
+    "parser": "babel-eslint",
     "parserOptions": {
         "ecmaVersion": 12,
         "sourceType": "module"
@@ -14,6 +15,6 @@ module.exports = {
         "import/prefer-default-export": "off",
         "import/no-cycle": "off",
         "max-classes-per-file": ["error", 1],
-        "no-underscore-dangle":  ["error", { "allow": ["_isAdmin"] }]
+        "no-underscore-dangle":  ["error", { "allow": ["_isAdmin"]}]
     }
 };

@@ -1,10 +1,9 @@
 import { Modal } from '../modal/modal';
-import { getData } from '../core/server/api-get-data';
 import { serverService } from '../core/service/server.service';
 import './event.scss';
 
 export class Event {
-  constructor(parent, members, id, dataId, eventName, eventCallback, isAdmin) {
+  constructor(parent, members, id, dataId, eventName, eventCallback, isAdmin, data) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
@@ -14,6 +13,7 @@ export class Event {
     this.eventCallback = eventCallback;
     this.eventName = eventName;
     this.isAdmin = isAdmin;
+    this.data = data;
   }
 
   get template() {
@@ -27,9 +27,8 @@ export class Event {
     `;
   }
 
-  async init() {
+  init() {
     this.el = document.createElement('div');
-    this.data = await getData('events').then((data) => data);
   }
 
   initEventListeners() {
@@ -150,12 +149,12 @@ export class Event {
     }, 500);
   }
 
-  async render() {
+  render() {
     if (this.el) {
       this.destroy();
     }
 
-    await this.init();
+    this.init();
     this.parent.appendChild(this.el);
     this.parent.classList.remove('container');
     this.el.innerHTML = this.template;
