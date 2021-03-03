@@ -60,16 +60,6 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
-/***/ "./core/create-member/create-member.js":
-/*!*********************************************!*\
-  !*** ./core/create-member/create-member.js ***!
-  \*********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getMember\": () => /* binding */ getMember\n/* harmony export */ });\n/* harmony import */ var _modals_user__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../modals/user */ \"./core/modals/user.js\");\n/* harmony import */ var _modals_admin__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modals/admin */ \"./core/modals/admin.js\");\n/* harmony import */ var _service_server_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../service/server.service */ \"./core/service/server.service.js\");\n\n\n\n\nfunction createNewMember(name, isAdmin) {\n  return isAdmin === 'true' ? new _modals_admin__WEBPACK_IMPORTED_MODULE_1__.Admin(name) : new _modals_user__WEBPACK_IMPORTED_MODULE_0__.User(name);\n}\n\nconst getMember = async () => {\n  const members = await _service_server_service__WEBPACK_IMPORTED_MODULE_2__.serverService.getDataFromServer('members');\n  const data = members.map(element => createNewMember(JSON.parse(element.data).name, JSON.parse(element.data).isAdmin));\n  return data;\n};\n\n//# sourceURL=webpack:///./core/create-member/create-member.js?");
-
-/***/ }),
-
 /***/ "./core/error-decorator/error-decorator.js":
 /*!*************************************************!*\
   !*** ./core/error-decorator/error-decorator.js ***!
@@ -77,6 +67,26 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"errorDecorator\": () => /* binding */ errorDecorator\n/* harmony export */ });\n/* harmony import */ var _notification_notification__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../notification/notification */ \"./notification/notification.js\");\n\nconst errorDecorator = (target, key, descriptor) => {\n  const origina = descriptor.value;\n\n  descriptor.value = async function descriptorValue(...args) {\n    try {\n      return await origina.apply(this, args);\n    } catch (err) {\n      const notification = new _notification_notification__WEBPACK_IMPORTED_MODULE_0__.Notification(document.querySelector('#header'), err, false, 100000);\n      notification.render();\n    }\n  };\n\n  return descriptor;\n};\n\n//# sourceURL=webpack:///./core/error-decorator/error-decorator.js?");
+
+/***/ }),
+
+/***/ "./core/member-factory/member-create.js":
+/*!**********************************************!*\
+  !*** ./core/member-factory/member-create.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getMember\": () => /* binding */ getMember\n/* harmony export */ });\n/* harmony import */ var _service_server_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../service/server.service */ \"./core/service/server.service.js\");\n/* harmony import */ var _member_factory__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./member-factory */ \"./core/member-factory/member-factory.js\");\n\n\nconst getMember = async () => {\n  const members = await _service_server_service__WEBPACK_IMPORTED_MODULE_0__.serverService.getDataFromServer('members');\n  const data = members.map(element => _member_factory__WEBPACK_IMPORTED_MODULE_1__.factory.create(JSON.parse(element.data).name, JSON.parse(element.data).isAdmin));\n  return data;\n};\n\n//# sourceURL=webpack:///./core/member-factory/member-create.js?");
+
+/***/ }),
+
+/***/ "./core/member-factory/member-factory.js":
+/*!***********************************************!*\
+  !*** ./core/member-factory/member-factory.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"factory\": () => /* binding */ factory\n/* harmony export */ });\n/* harmony import */ var _modals_user__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../modals/user */ \"./core/modals/user.js\");\n/* harmony import */ var _modals_admin__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modals/admin */ \"./core/modals/admin.js\");\nfunction _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }\n\n\n\n\nclass MemberFactory {\n  create(name, type) {\n    const MemberShip = MemberFactory.list[type];\n    const member = new MemberShip(name);\n    member.type = type;\n\n    member.define = function () {\n      return `${this.name} ${this.type}`;\n    };\n\n    return member;\n  }\n\n}\n\n_defineProperty(MemberFactory, \"list\", {\n  false: _modals_user__WEBPACK_IMPORTED_MODULE_0__.User,\n  true: _modals_admin__WEBPACK_IMPORTED_MODULE_1__.Admin\n});\n\nconst factory = new MemberFactory();\n\n//# sourceURL=webpack:///./core/member-factory/member-factory.js?");
 
 /***/ }),
 
@@ -106,7 +116,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"membersService\": () => /* binding */ membersService\n/* harmony export */ });\n/* harmony import */ var _create_member_create_member__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../create-member/create-member */ \"./core/create-member/create-member.js\");\n\n\nclass MembersService {\n  getAllMembers() {\n    return (0,_create_member_create_member__WEBPACK_IMPORTED_MODULE_0__.getMember)().then(data => data);\n  }\n\n}\n\nconst membersService = new MembersService();\n\n//# sourceURL=webpack:///./core/service/members.service.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"membersService\": () => /* binding */ membersService\n/* harmony export */ });\n/* harmony import */ var _member_factory_member_create__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../member-factory/member-create */ \"./core/member-factory/member-create.js\");\n\n\nclass MembersService {\n  getAllMembers() {\n    return (0,_member_factory_member_create__WEBPACK_IMPORTED_MODULE_0__.getMember)().then(data => data);\n  }\n\n}\n\nconst membersService = new MembersService();\n\n//# sourceURL=webpack:///./core/service/members.service.js?");
 
 /***/ }),
 
