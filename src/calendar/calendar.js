@@ -3,7 +3,7 @@ import { Event } from '../event/event';
 import { DAYS } from '../core/constants/days';
 import { TIMES } from '../core/constants/times';
 import { Authorization } from '../authorization/authorization';
-import { getDataFromServer } from '../core/server/api';
+import { serverService } from '../core/service/server.service';
 import { membersService } from '../core/service/members.service';
 import './calendar.scss';
 
@@ -78,7 +78,7 @@ export class Calendar {
     this.el.classList.add('card');
     this.el.classList.add('calendar');
     this.members = await membersService.getAllMembers().then((data) => data);
-    this.data = await getDataFromServer('events').then((data) => data);
+    this.data = await serverService.getDataFromServer('events').then((data) => data);
   }
 
   initAddEvent() {

@@ -1,6 +1,6 @@
 import { Modal } from '../modal/modal';
 import { getData } from '../core/server/api-get-data';
-import { ChangeDataOnServer, deleteDataOnServer } from '../core/server/api';
+import { serverService } from '../core/service/server.service';
 import './event.scss';
 
 export class Event {
@@ -72,7 +72,7 @@ export class Event {
   }
 
   deleteCallback() {
-    deleteDataOnServer('events', this.id);
+    serverService.deleteDataOnServer('events', this.id);
     this.destroy();
   }
 
@@ -143,7 +143,7 @@ export class Event {
       dataId: eventNewId,
     };
 
-    ChangeDataOnServer('events', JSON.stringify(changeEvent), JSON.parse(eventPriviousId).id);
+    serverService.ChangeDataOnServer('events', JSON.stringify(changeEvent), JSON.parse(eventPriviousId).id);
 
     setTimeout(() => {
       this.eventCallback();

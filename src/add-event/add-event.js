@@ -2,7 +2,7 @@ import { Calendar } from '../calendar/calendar';
 import { DAYS } from '../core/constants/days';
 import { TIMES } from '../core/constants/times';
 import { Notification } from '../notification/notification';
-import { createDataOnServer } from '../core/server/api';
+import { serverService } from '../core/service/server.service';
 import { getData } from '../core/server/api-get-data';
 import { membersService } from '../core/service/members.service';
 import './add-event.scss';
@@ -141,9 +141,11 @@ export class AddEvent {
     } else {
       await this.addEvent();
       this.destroy();
-      const calendar = new Calendar(document.body, true, this.name);
-      calendar.render();
       this.renderNotification('Event created', true);
+      setTimeout(() => {
+        const calendar = new Calendar(document.body, true, this.name);
+        calendar.render();
+      }, 300);
     }
   }
 
@@ -176,7 +178,7 @@ export class AddEvent {
       dataId: `${this.weekday.value.toLowerCase()}-${this.time.value.replace(/(:00)/, '')}`,
     };
 
-    createDataOnServer('events', newEvent);
+    serverService.createDataOnServer('events', newEvent);
   }
 
   async render() {
