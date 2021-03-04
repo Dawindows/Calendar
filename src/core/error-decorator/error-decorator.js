@@ -3,7 +3,7 @@ import { Notification } from '../../notification/notification';
 export const errorDecorator = (target, key, descriptor) => {
   const origina = descriptor.value;
 
-  descriptor.value = async function descriptorValue(...args) {
+  descriptor.value = async function (...args) {
     try {
       return await origina.apply(this, args);
     } catch (err) {
@@ -15,6 +15,7 @@ export const errorDecorator = (target, key, descriptor) => {
       );
       notification.render();
     }
+    return null;
   };
 
   return descriptor;

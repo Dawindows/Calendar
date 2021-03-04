@@ -15,6 +15,8 @@ module.exports = {
         "import/prefer-default-export": "off",
         "import/no-cycle": "off",
         "max-classes-per-file": ["error", 1],
-        "no-underscore-dangle":  ["error", { "allow": ["_isAdmin"]}]
+        "no-underscore-dangle":  ["error", { "allow": ["_isAdmin"]}],
+        "func-names": ["error", "never"],
+        "no-param-reassign": [2, {"props": false}]
     }
 };

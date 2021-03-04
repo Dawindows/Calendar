@@ -1,12 +1,12 @@
 import { errorDecorator } from '../error-decorator/error-decorator';
 
 class ServerService {
-  constructor() {
-    this.url = 'http://158.101.166.74:8080/api/data/david_sokur';
+  constructor(url) {
     if (typeof ServerService.instance === 'object') {
       return ServerService.instance;
     }
     ServerService.instance = this;
+    this.url = url;
     return this;
   }
 
@@ -52,4 +52,4 @@ class ServerService {
   }
 }
 
-export const serverService = new ServerService();
+export const serverService = new ServerService('http://158.101.166.74:8080/api/data/david_sokur');
