@@ -3,18 +3,18 @@ import { Admin } from '../modals/admin';
 
 class MemberFactory {
   static list = {
-    false : User,
+    false: User,
     true: Admin,
   }
 
   create(name, type) {
     const MemberShip = MemberFactory.list[type];
-    const member = new MemberShip(name);
-    member.type = type;
-    member.define = function() {
+    this.member = new MemberShip(name);
+    this.member.type = type;
+    this.member.define = function () {
       return (`${this.name} ${this.type}`);
-    }
-    return member;
+    };
+    return this.member;
   }
 }
 
