@@ -3,18 +3,14 @@ class EventEmitter {
     this.events = {};
   }
 
-  on(event, listener) {
-    if (this.events[event]) {
-      this.events[event] = [];
-    }
-
-    this.events[event].push(listener);
+  on(eventName, callback) {
+    !this.events[eventName] && (this.events[eventName] = []);
+    this.events[eventName].push(callback);
   }
 
-  emit(event, ...args) {
-    if (this.events[event]) {
-      this.events[event].forEach((listener) => listener.apply(this, args));
-    }
+  emit(eventName, args) {
+    const event = this.events[eventName];
+    event && event.forEach((callback) => callback.call(null, args));
   }
 }
 

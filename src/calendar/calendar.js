@@ -85,7 +85,7 @@ export class Calendar {
   initAddEvent() {
     this.addEvent = document.querySelector('#add-event');
     const listenerAddEvent = this.addEvent.addEventListener('click', () => {
-      const addEvent = new AddEvent(document.body, this.name, this.getData, this.members);
+      const addEvent = new AddEvent(document.body, this.name, this.members);
       addEvent.render();
       this.destroy();
     });
