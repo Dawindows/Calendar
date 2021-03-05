@@ -1,5 +1,6 @@
 import { Modal } from '../modal/modal';
 import { serverService } from '../core/service/server.service';
+import { emitter } from '../core/event-emitter/event-emitter';
 import './event.scss';
 
 export class Event {
@@ -72,6 +73,7 @@ export class Event {
 
   deleteCallback() {
     serverService.deleteDataOnServer('events', this.id);
+    emitter.on('deleteDataOnServer', serverService.deleteDataOnServer('events', this.id));
     this.destroy();
   }
 

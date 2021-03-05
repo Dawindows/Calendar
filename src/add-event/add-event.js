@@ -3,17 +3,17 @@ import { DAYS } from '../core/constants/days';
 import { TIMES } from '../core/constants/times';
 import { Notification } from '../notification/notification';
 import { serverService } from '../core/service/server.service';
+import { emitter } from '../core/event-emitter/event-emitter';
 import './add-event.scss';
 
 export class AddEvent {
-  constructor(parent, name, data, members) {
+  constructor(parent, name, members) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
     this.days = DAYS;
     this.times = TIMES;
     this.name = name;
-    this.data = data;
     this.members = members;
   }
 
@@ -90,10 +90,12 @@ export class AddEvent {
     `;
   }
 
-  init() {
+  async init() {
     this.el = document.createElement('div');
     this.el.classList.add('card');
     this.el.classList.add('add-event');
+    this.data = await serverService.getDataFromServer('events').then((data) => data);
+    this.getData = this.data.map((item) => JSON.parse(item.data));
   }
 
   afterInit() {
@@ -120,8 +122,8 @@ export class AddEvent {
   }
 
   async checkDate() {
-    if (this.data) {
-      this.dateInfo = this.data.find((item) => (
+    if (this.getData) {
+      this.dateInfo = this.getData.find((item) => (
         item.weekday === this.weekday.value && item.time === this.time.value
       ));
     }
@@ -177,14 +179,18 @@ export class AddEvent {
     };
 
     serverService.createDataOnServer('events', newEvent);
+
+    emitter.on('createDataOnServer', () => {
+      serverService.createDataOnServer('events', newEvent);
+    });
   }
 
-  render() {
+  async render() {
     if (this.el) {
       this.destroy();
     }
 
-    this.init();
+    await this.init();
     this.el.innerHTML = this.template;
     this.parent.appendChild(this.el);
     this.afterInit();
