@@ -52,3 +52,10 @@ body {
 .show {
   display: block; }
 
+.authorization {
+  text-align: center; }
+  .authorization .modal-card-foot {
+    justify-content: flex-end; }
+  .authorization .modal-card {
+    width: 302px; }
+

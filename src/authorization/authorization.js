@@ -1,6 +1,6 @@
 import { Calendar } from '../calendar/calendar';
 import { membersService } from '../core/service/members.service';
-import './authorization/authorization.scss';
+import './authorization.scss';
 
 export class Authorization {
   constructor(parent) {
