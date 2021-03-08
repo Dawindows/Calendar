@@ -102,9 +102,8 @@ export class AddEvent {
     this.el = document.createElement('div');
     this.el.classList.add('card');
     this.el.classList.add('add-event');
-    this.data = await serverService
-      .getDataFromServer('events')
-      .then((data) => data);
+    this.content = await serverService.getDataFromServer('events');
+    this.data = (await this.content.json()) || [];
     this.getData = this.data.map((item) => JSON.parse(item.data));
   }
 

@@ -86,9 +86,8 @@ export class Calendar {
     this.el.classList.add('card');
     this.el.classList.add('calendar');
     this.members = await membersService.getAllMembers().then((data) => data);
-    this.data = await serverService
-      .getDataFromServer('events')
-      .then((data) => data);
+    this.content = await serverService.getDataFromServer('events');
+    this.data = (await this.content.json()) || [];
     this.getData = this.data.map((item) => JSON.parse(item.data));
   }
 

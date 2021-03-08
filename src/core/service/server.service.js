@@ -13,42 +13,44 @@ class ServerService {
   @errorDecorator
   async getDataFromServer(entityName) {
     const response = await fetch(`${this.url}/${entityName}`);
-    const content = await response.json();
-    return content;
+    return response;
   }
 
   @errorDecorator
   async deleteDataOnServer(entityName, DataId) {
-    await fetch(`${this.url}/${entityName}/${DataId}`, {
+    const response = await fetch(`${this.url}/${entityName}/${DataId}`, {
       method: 'DELETE',
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
       },
     });
+    return response;
   }
 
   @errorDecorator
   async createDataOnServer(entityName, newDataContent) {
-    await fetch(`${this.url}/${entityName}`, {
+    const setScores = await fetch(`${this.url}/${entityName}`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ data: JSON.stringify(newDataContent) }),
-    });
+    }).then((result) => result.json());
+    return setScores;
   }
 
   @errorDecorator
   async ChangeDataOnServer(entityName, changeDataContent, DataId) {
-    await fetch(`${this.url}/${entityName}/${DataId}`, {
+    const updateData = await fetch(`${this.url}/${entityName}/${DataId}`, {
       method: 'PUT',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ data: changeDataContent }),
-    });
+    }).then((result) => result.json());
+    return updateData;
   }
 }
 
