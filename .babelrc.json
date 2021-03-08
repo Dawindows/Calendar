@@ -1,7 +1,8 @@
 {
 "plugins": [
   ["@babel/plugin-proposal-decorators", { "legacy": true }],
-  ["@babel/plugin-proposal-class-properties", { "legacy": true }]
-  
+  ["@babel/plugin-proposal-class-properties", { "legacy": true }],
+  ["@babel/plugin-transform-modules-commonjs"],
+  ["babel-plugin-transform-es2015-modules-commonjs"]
 ]
 }

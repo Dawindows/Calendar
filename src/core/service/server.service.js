@@ -52,4 +52,6 @@ class ServerService {
   }
 }
 
-export const serverService = new ServerService('http://158.101.166.74:8080/api/data/david_sokur');
+export const serverService = new ServerService(
+  'http://158.101.166.74:8080/api/data/david_sokur'
+);

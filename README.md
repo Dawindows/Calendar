@@ -18,10 +18,17 @@
 
 ### Start instructions
 
-1. install webpack\webpack-cli ***npm install***
-2. launch a project ***npm start***
+1. install webpack\webpack-cli `npm install`
+2. launch a project `npm start`
 
  **Start GitHub pages:** https://dawindows.github.io/calendar/dist/index.html
+
+### Scripts
+`npm run lint` - start eslint;
+`npm run stylelint` - start stylelint;
+`npm run stylelint:fix` - start fix stylelint;
+`npm run prettier` - start prettier;
+`npm run test` - start unit test;
 
 ### Contact information for programmer
 

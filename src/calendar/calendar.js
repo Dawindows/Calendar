@@ -19,28 +19,36 @@ export class Calendar {
   }
 
   get template() {
-    const table = this.times.map((time) => {
-      const items = this.days.map((day) => (
-        `<td id="${day.toLowerCase()}-${time}" class="container"></td>`
-      )).join('');
+    const table = this.times
+      .map((time) => {
+        const items = this.days
+          .map(
+            (day) =>
+              `<td id="${day.toLowerCase()}-${time}" class="container"></td>`
+          )
+          .join('');
 
-      return `
+        return `
         <tr>
           <td>${time}:00</td>
           ${items}
         </tr>
       `;
-    }).join('');
+      })
+      .join('');
 
-    const members = this.members.map((member) => (
-      `
+    const members = this.members
+      .map(
+        (member) =>
+          `
         <option class="member" value="${member.name}">${member.name}</option>
       `
-    )).join('');
+      )
+      .join('');
 
     return `
       <div id="calendar" class="card-content">
-        <div id="calendar-header">
+        <div class="calendar-header">
           <div class="card-header-title is-justify-content-space-between">
             <span>Calendar</span>
               <div>
@@ -78,7 +86,9 @@ export class Calendar {
     this.el.classList.add('card');
     this.el.classList.add('calendar');
     this.members = await membersService.getAllMembers().then((data) => data);
-    this.data = await serverService.getDataFromServer('events').then((data) => data);
+    this.data = await serverService
+      .getDataFromServer('events')
+      .then((data) => data);
     this.getData = this.data.map((item) => JSON.parse(item.data));
   }
 
@@ -137,7 +147,7 @@ export class Calendar {
           elementData.eventName,
           this.render.bind(this),
           this.isAdmin,
-          this.getData,
+          this.getData
         );
 
         allCalendarEvents.render();

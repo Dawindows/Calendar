@@ -26,7 +26,9 @@ export class Notification {
     } else {
       elNotification.classList.add('is-danger');
     }
-    this.timer = setTimeout(() => { this.destroy(); }, this.duration);
+    this.timer = setTimeout(() => {
+      this.destroy();
+    }, this.duration);
   }
 
   init() {
@@ -37,12 +39,19 @@ export class Notification {
   afterInit() {
     this.deleteNotification = document.querySelector('#delete-notification');
 
-    const listenerDeleteNotification = this.deleteNotification.addEventListener('click', () => {
-      clearTimeout(this.timer);
-      this.destroy();
-    });
+    const listenerDeleteNotification = this.deleteNotification.addEventListener(
+      'click',
+      () => {
+        clearTimeout(this.timer);
+        this.destroy();
+      }
+    );
 
-    this.eventListeners.push(['click', listenerDeleteNotification, this.deleteNotification]);
+    this.eventListeners.push([
+      'click',
+      listenerDeleteNotification,
+      this.deleteNotification,
+    ]);
   }
 
   render() {

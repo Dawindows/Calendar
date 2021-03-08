@@ -11,12 +11,11 @@ export const errorDecorator = (target, key, descriptor) => {
         document.querySelector('#header'),
         err,
         false,
-        100000,
+        100000
       );
       notification.render();
     }
     return null;
   };
-
   return descriptor;
 };

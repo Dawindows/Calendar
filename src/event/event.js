@@ -1,10 +1,18 @@
 import { Modal } from '../modal/modal';
 import { serverService } from '../core/service/server.service';
-import { emitter } from '../core/event-emitter/event-emitter';
 import './event.scss';
 
 export class Event {
-  constructor(parent, members, id, dataId, eventName, eventCallback, isAdmin, data) {
+  constructor(
+    parent,
+    members,
+    id,
+    dataId,
+    eventName,
+    eventCallback,
+    isAdmin,
+    data
+  ) {
     this.el = null;
     this.parent = parent;
     this.eventListeners = [];
@@ -19,10 +27,14 @@ export class Event {
 
   get template() {
     return `
-        <div class="message is-info ${this.members.join(' ')}" data-item="${this.dataId}" data-id="${this.id}" draggable="true">
+        <div class="message is-info ${this.members.join(' ')}" data-item="${
+      this.dataId
+    }" data-id="${this.id}" draggable="true">
         <span class="message-header">
             ${this.eventName}
-            <button class="delete-event delete is-small" event-id="${this.dataId}"></button>
+            <button class="delete-event delete is-small" event-id="${
+              this.dataId
+            }"></button>
         </span>
         </div>
     `;
@@ -38,7 +50,7 @@ export class Event {
     const id = this.deleteButton.getAttribute('event-id');
     const listenerBtn = this.deleteButton.addEventListener(
       'click',
-      this.openConfirmationModal.bind(this, id),
+      this.openConfirmationModal.bind(this, id)
     );
 
     this.eventListeners.push(['click', listenerBtn, this.deleteButton]);
@@ -65,7 +77,7 @@ export class Event {
         if (del) {
           this.deleteCallback();
         }
-      },
+      }
     );
 
     myModal.render();
@@ -73,7 +85,6 @@ export class Event {
 
   deleteCallback() {
     serverService.deleteDataOnServer('events', this.id);
-    emitter.on('deleteDataOnServer', serverService.deleteDataOnServer('events', this.id));
     this.destroy();
   }
 
@@ -83,7 +94,10 @@ export class Event {
     const self = this;
 
     function handlerDragstart(event) {
-      event.dataTransfer.setData('dragItem', JSON.stringify({ item: this.dataset.item, id: this.dataset.id }));
+      event.dataTransfer.setData(
+        'dragItem',
+        JSON.stringify({ item: this.dataset.item, id: this.dataset.id })
+      );
       this.classList.add('drag-item-start');
     }
 
@@ -131,7 +145,7 @@ export class Event {
 
   updateEvent(eventNewId, eventPriviousId) {
     const eventFromServer = this.data.find(
-      (item) => item.dataId === JSON.parse(eventPriviousId).item,
+      (item) => item.dataId === JSON.parse(eventPriviousId).item
     );
 
     [eventFromServer.weekday, eventFromServer.time] = eventNewId.split('-');
@@ -144,7 +158,11 @@ export class Event {
       dataId: eventNewId,
     };
 
-    serverService.ChangeDataOnServer('events', JSON.stringify(changeEvent), JSON.parse(eventPriviousId).id);
+    serverService.ChangeDataOnServer(
+      'events',
+      JSON.stringify(changeEvent),
+      JSON.parse(eventPriviousId).id
+    );
 
     setTimeout(() => {
       this.eventCallback();
