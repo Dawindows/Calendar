@@ -125,7 +125,7 @@ export class AddEvent {
     const listenerCreateEvent = this.createEvent.addEventListener(
       'click',
       () => {
-        this.checkDate();
+        this.checkDoubleDate();
       }
     );
 
@@ -133,7 +133,13 @@ export class AddEvent {
     this.eventListeners.push(['click', listenerCancel, this.cancel]);
   }
 
-  async checkDate() {
+  checkDoubleDate(form, testEvent) {
+    if (form) {
+      this.weekday = form.querySelector('#weekday');
+      this.time = form.querySelector('#time');
+      this.getData = testEvent;
+    }
+
     if (this.getData) {
       this.dateInfo = this.getData.find(
         (item) =>
@@ -141,6 +147,11 @@ export class AddEvent {
       );
     }
 
+    this.checkDate();
+    return this.dateInfo;
+  }
+
+  async checkDate() {
     if (this.eventName.value.length <= 3) {
       this.renderNotification(
         'Filed to create an event. Event name is too short',
@@ -203,6 +214,7 @@ export class AddEvent {
     };
 
     serverService.create('events', newEvent);
+
     return newEvent;
   }
 
