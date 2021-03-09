@@ -4,10 +4,21 @@ import { AddEvent } from './add-event';
 const addEvent = new AddEvent();
 fetchMock.enableMocks();
 
-describe('Server test create event', () => {
+describe('test create event', () => {
   let form;
+  let testEvent;
 
   beforeAll(() => {
+    testEvent = [
+      {
+        eventName: 'test event',
+        members: 'David',
+        weekday: 'monday',
+        time: '12',
+        dataId: 'monday-12',
+      },
+    ];
+
     form = document.createElement('div');
     form.innerHTML = `
       <input id="event-name" class="input" type="text" value="test event"> 
@@ -17,11 +28,11 @@ describe('Server test create event', () => {
       </select>
 
       <select id="weekday">
-        <option selected value="Monday">Monday</option>
+        <option selected value="monday">Monday</option>
       </select>
 
       <select id="time">
-        <option selected value="12:00">12:00</option>
+        <option selected value="12">12:00</option>
       </select>
     `;
   });
@@ -37,5 +48,12 @@ describe('Server test create event', () => {
       time: '12',
       dataId: 'monday-12',
     });
+  });
+
+  it('should check double date', async () => {
+    const checkDate = await addEvent.checkDoubleDate(form, testEvent);
+
+    expect(checkDate).toBeInstanceOf(Object);
+    expect([checkDate]).toEqual(testEvent);
   });
 });
