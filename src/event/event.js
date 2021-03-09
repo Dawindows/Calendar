@@ -84,7 +84,7 @@ export class Event {
   }
 
   deleteCallback() {
-    serverService.deleteDataOnServer('events', this.id);
+    serverService.delete('events', this.id);
     this.destroy();
   }
 
@@ -158,7 +158,7 @@ export class Event {
       dataId: eventNewId,
     };
 
-    serverService.ChangeDataOnServer(
+    serverService.update(
       'events',
       JSON.stringify(changeEvent),
       JSON.parse(eventPriviousId).id

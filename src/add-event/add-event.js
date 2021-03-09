@@ -102,7 +102,7 @@ export class AddEvent {
     this.el = document.createElement('div');
     this.el.classList.add('card');
     this.el.classList.add('add-event');
-    this.content = await serverService.getDataFromServer('events');
+    this.content = await serverService.get('events');
     this.data = (await this.content.json()) || [];
     this.getData = this.data.map((item) => JSON.parse(item.data));
   }
@@ -152,6 +152,10 @@ export class AddEvent {
         false
       );
     } else {
+      this.selectedMembers = Array.prototype.filter
+        .apply(this.memberOptions, [(item) => item.selected])
+        .map((item) => item.value);
+
       await this.addEvent();
       this.destroy();
       this.renderNotification('Event created', true);
@@ -175,17 +179,21 @@ export class AddEvent {
     this.notification.render();
   }
 
-  addEvent() {
-    const members = Array.prototype.filter
-      .apply(this.memberOptions, [(item) => item.selected])
-      .map((item) => item.value);
+  addEvent(form) {
+    if (form) {
+      this.eventName = form.querySelector('#event-name');
+      this.membersSelected = form.querySelector('#members');
+      this.selectedMembers = form.querySelector('#members').value;
+      this.weekday = form.querySelector('#weekday');
+      this.time = form.querySelector('#time');
+    }
 
     const newEvent = {
       eventName: this.eventName.value,
       members:
         this.membersSelected.value === 'All members'
           ? this.members.map((item) => item.name)
-          : members,
+          : this.selectedMembers,
       weekday: this.weekday.value.toLowerCase(),
       time: this.time.value.replace(/(:00)/, ''),
       dataId: `${this.weekday.value.toLowerCase()}-${this.time.value.replace(
@@ -194,7 +202,8 @@ export class AddEvent {
       )}`,
     };
 
-    serverService.createDataOnServer('events', newEvent);
+    serverService.create('events', newEvent);
+    return newEvent;
   }
 
   async render() {

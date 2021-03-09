@@ -11,13 +11,13 @@ class ServerService {
   }
 
   @errorDecorator
-  async getDataFromServer(entityName) {
+  async get(entityName) {
     const response = await fetch(`${this.url}/${entityName}`);
     return response;
   }
 
   @errorDecorator
-  async deleteDataOnServer(entityName, DataId) {
+  async delete(entityName, DataId) {
     const response = await fetch(`${this.url}/${entityName}/${DataId}`, {
       method: 'DELETE',
       headers: {
@@ -28,7 +28,7 @@ class ServerService {
   }
 
   @errorDecorator
-  async createDataOnServer(entityName, newDataContent) {
+  async create(entityName, newDataContent) {
     const setScores = await fetch(`${this.url}/${entityName}`, {
       method: 'POST',
       headers: {
@@ -41,7 +41,7 @@ class ServerService {
   }
 
   @errorDecorator
-  async ChangeDataOnServer(entityName, changeDataContent, DataId) {
+  async update(entityName, changeDataContent, DataId) {
     const updateData = await fetch(`${this.url}/${entityName}/${DataId}`, {
       method: 'PUT',
       headers: {
