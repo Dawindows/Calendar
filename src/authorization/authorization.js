@@ -1,5 +1,6 @@
 import { Calendar } from '../calendar/calendar';
 import { membersService } from '../core/service/members.service';
+import './authorization.scss';
 
 export class Authorization {
   constructor(parent) {
@@ -9,13 +10,16 @@ export class Authorization {
   }
 
   get template() {
-    this.membersElements = this.members.map((member) => (`
+    this.membersElements = this.members
+      .map(
+        (member) => `
           <option class="member" value="${member.name}">${member.name}</option>
     `
-    )).join('');
+      )
+      .join('');
 
     return `
-        <div class="modal is-active" id="authorization">
+        <div class="authorization modal is-active">
             <div class="modal-background"></div>
             <div class="modal-card">
                 <header class="modal-card-head">
@@ -49,9 +53,15 @@ export class Authorization {
     const nameUser = this.el.querySelector('#user');
 
     const listenerOk = this.buttonOk.addEventListener('click', () => {
-      const memberElement = this.members.find((index) => index.name === nameUser.value);
+      const memberElement = this.members.find(
+        (index) => index.name === nameUser.value
+      );
       localStorage.setItem('member', JSON.stringify(memberElement));
-      const calendar = new Calendar(document.body, memberElement._isAdmin, memberElement.name);
+      const calendar = new Calendar(
+        document.body,
+        memberElement._isAdmin,
+        memberElement.name
+      );
       this.destroy();
       calendar.render();
     });

@@ -2,7 +2,8 @@ import { getMember } from '../member-factory/member-create';
 
 class MembersService {
   getAllMembers() {
-    return getMember().then((data) => data);
+    this.data = getMember().then((data) => data);
+    return this.data;
   }
 }
 

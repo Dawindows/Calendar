@@ -3,7 +3,6 @@ import { DAYS } from '../core/constants/days';
 import { TIMES } from '../core/constants/times';
 import { Notification } from '../notification/notification';
 import { serverService } from '../core/service/server.service';
-import { emitter } from '../core/event-emitter/event-emitter';
 import './add-event.scss';
 
 export class AddEvent {
@@ -18,23 +17,32 @@ export class AddEvent {
   }
 
   get template() {
-    const membersElements = this.members.map((member) => (
-      `
+    const membersElements = this.members
+      .map(
+        (member) =>
+          `
         <option class="member" value="${member.name}">${member.name}</option>
       `
-    )).join('');
+      )
+      .join('');
 
-    const daysElements = this.days.map((day) => (
-      `
+    const daysElements = this.days
+      .map(
+        (day) =>
+          `
         <option value="${day.toLowerCase()}">${day}</option>
       `
-    )).join('');
+      )
+      .join('');
 
-    const timeElements = this.times.map((time) => (
-      `
+    const timeElements = this.times
+      .map(
+        (time) =>
+          `
         <option value="${time}">${time}:00</option>
       `
-    )).join('');
+      )
+      .join('');
 
     return `
       <div class="card-header">
@@ -94,7 +102,8 @@ export class AddEvent {
     this.el = document.createElement('div');
     this.el.classList.add('card');
     this.el.classList.add('add-event');
-    this.data = await serverService.getDataFromServer('events').then((data) => data);
+    this.content = await serverService.get('events');
+    this.data = (await this.content.json()) || [];
     this.getData = this.data.map((item) => JSON.parse(item.data));
   }
 
@@ -113,9 +122,12 @@ export class AddEvent {
       calendar.render();
     });
 
-    const listenerCreateEvent = this.createEvent.addEventListener('click', () => {
-      this.checkDate();
-    });
+    const listenerCreateEvent = this.createEvent.addEventListener(
+      'click',
+      () => {
+        this.checkDate();
+      }
+    );
 
     this.eventListeners.push(['click', listenerCreateEvent, this.createEvent]);
     this.eventListeners.push(['click', listenerCancel, this.cancel]);
@@ -123,22 +135,27 @@ export class AddEvent {
 
   async checkDate() {
     if (this.getData) {
-      this.dateInfo = this.getData.find((item) => (
-        item.weekday === this.weekday.value && item.time === this.time.value
-      ));
+      this.dateInfo = this.getData.find(
+        (item) =>
+          item.weekday === this.weekday.value && item.time === this.time.value
+      );
     }
 
     if (this.eventName.value.length <= 3) {
       this.renderNotification(
         'Filed to create an event. Event name is too short',
-        false,
+        false
       );
     } else if (this.dateInfo) {
       this.renderNotification(
         'Filed to create an event. Time slot is already booked',
-        false,
+        false
       );
     } else {
+      this.selectedMembers = Array.prototype.filter
+        .apply(this.memberOptions, [(item) => item.selected])
+        .map((item) => item.value);
+
       await this.addEvent();
       this.destroy();
       this.renderNotification('Event created', true);
@@ -157,32 +174,36 @@ export class AddEvent {
       document.querySelector('#header'),
       textValue,
       booleanValue,
-      3000,
+      3000
     );
     this.notification.render();
   }
 
-  addEvent() {
-    const members = Array.prototype.filter
-      .apply(this.memberOptions, [(item) => item.selected])
-      .map((item) => item.value);
+  addEvent(form) {
+    if (form) {
+      this.eventName = form.querySelector('#event-name');
+      this.membersSelected = form.querySelector('#members');
+      this.selectedMembers = form.querySelector('#members').value;
+      this.weekday = form.querySelector('#weekday');
+      this.time = form.querySelector('#time');
+    }
 
     const newEvent = {
       eventName: this.eventName.value,
       members:
         this.membersSelected.value === 'All members'
           ? this.members.map((item) => item.name)
-          : members,
+          : this.selectedMembers,
       weekday: this.weekday.value.toLowerCase(),
       time: this.time.value.replace(/(:00)/, ''),
-      dataId: `${this.weekday.value.toLowerCase()}-${this.time.value.replace(/(:00)/, '')}`,
+      dataId: `${this.weekday.value.toLowerCase()}-${this.time.value.replace(
+        /(:00)/,
+        ''
+      )}`,
     };
 
-    serverService.createDataOnServer('events', newEvent);
-
-    emitter.on('createDataOnServer', () => {
-      serverService.createDataOnServer('events', newEvent);
-    });
+    serverService.create('events', newEvent);
+    return newEvent;
   }
 
   async render() {

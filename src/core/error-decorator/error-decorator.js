@@ -8,15 +8,14 @@ export const errorDecorator = (target, key, descriptor) => {
       return await origina.apply(this, args);
     } catch (err) {
       const notification = new Notification(
-        document.querySelector('#header'),
+        document.querySelector('#header') || document.body,
         err,
         false,
-        100000,
+        100000
       );
       notification.render();
     }
     return null;
   };
-
   return descriptor;
 };

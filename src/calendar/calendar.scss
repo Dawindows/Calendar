@@ -1,43 +1,42 @@
 .calendar {
-	width: 920px;
-	margin: 62px auto;
+  width: 920px;
+  margin: 62px auto;
 }
 
 .table {
-	td {
-		width: 146px;
-		height: 40px;
-		vertical-align: middle;
-	}
+  td {
+    width: 146px;
+    height: 40px;
+    vertical-align: middle;
+  }
 }
 
-#calendar-header {
-	.card-header-title {
-		padding: 0 0 8px 0;
+.calendar-header {
+  .card-header-title {
+    padding: 0 0 8px 0;
 
-		span {
-			font-size: 24px;
-		}
-	}
+    span {
+      font-size: 24px;
+    }
+  }
 }
 
-	
 .calendar-footer {
-	display: flex;
-	justify-content: flex-end;
-	a {
-		margin-left: 12px;
-	}
+  display: flex;
+  justify-content: flex-end;
+  a {
+    margin-left: 12px;
+  }
 }
 
 .selected {
-	opacity: 0.6;
+  opacity: 0.6;
 }
 
 .hide {
-	display: none;
+  display: none;
 }
 
 .show {
-	display: block;
+  display: block;
 }
